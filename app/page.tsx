@@ -13,6 +13,9 @@ import {
   Line,
   Legend,
 } from "recharts"
+import React from "react" // Import React for using JSX in the new component
+import { energyCompaniesInfo, type CompanyInfo } from '@/lib/energy-companies-info' // Import energy companies info
+import { useTheme } from 'next-themes' // Import useTheme for theme context
 
 const BarChart3 = () => (
   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -601,6 +604,7 @@ const translations = {
     education: "Обучение",
     news: "Новости",
     kztForecast: "Прогноз KZT/USD",
+    energyIndustries: "Энергетика",
     contactSales: "Связаться с отделом продаж",
 
     // Main page
@@ -693,6 +697,27 @@ const translations = {
     descending: "нисходящий",
     positive: "положительное",
     negative: "отрицательное",
+
+    energyTitle: "Энергетические компании",
+    energySubtitle: "Мировые и казахстанские энергетические компании",
+    globalCompanies: "Мировые компании",
+    kazakhstanCompanies: "Казахстанские компании",
+    companyName: "Компания",
+    ticker: "Тикер",
+    currentPrice: "Текущая цена",
+    priceChange: "Изменение",
+    volatility: "Волатильность",
+    status: "Статус",
+    viewDetails: "Подробнее",
+    lastUpdated: "Последнее обновление",
+    totalCompanies: "Всего компаний",
+    successfulFetches: "Успешно загружено",
+    dataNotAvailable: "Данные пока недоступны",
+    runDataCollection: "Запустите скрипт сбора данных",
+    country: "Страна",
+    successRate: "Коэффициент успеха",
+    noDataAvailable: "Нет данных",
+    europe: "Европа",
   },
   en: {
     // Navigation
@@ -701,6 +726,7 @@ const translations = {
     education: "Education",
     news: "News",
     kztForecast: "KZT/USD Forecast",
+    energyIndustries: "Energy",
     contactSales: "Contact Sales",
 
     // Main page
@@ -793,6 +819,27 @@ const translations = {
     descending: "descending",
     positive: "positive",
     negative: "negative",
+
+    energyTitle: "Energy Companies",
+    energySubtitle: "Global and Kazakhstan energy companies",
+    globalCompanies: "Global Companies",
+    kazakhstanCompanies: "Kazakhstan Companies",
+    companyName: "Company",
+    ticker: "Ticker",
+    currentPrice: "Current Price",
+    priceChange: "Change",
+    volatility: "Volatility",
+    status: "Status",
+    viewDetails: "View Details",
+    lastUpdated: "Last Updated",
+    totalCompanies: "Total Companies",
+    successfulFetches: "Successfully Fetched",
+    dataNotAvailable: "Data not available yet",
+    runDataCollection: "Run data collection script",
+    country: "Country",
+    successRate: "Success Rate",
+    noDataAvailable: "No data",
+    europe: "Europe",
   },
   kk: {
     // Changed kz to kk
@@ -802,6 +849,7 @@ const translations = {
     education: "Оқыту", // Changed from Білім
     news: "Жаңалықтар",
     kztForecast: "KZT/USD Болжамы", // Changed to match English and RU
+    energyIndustries: "Энергетика",
     contactSales: "Сатуға хабарласу",
 
     // Main page
@@ -894,6 +942,27 @@ const translations = {
     descending: "төмендеу", // Adjusted
     positive: "оң", // Adjusted
     negative: "теріс", // Adjusted
+
+    energyTitle: "Энергетикалық компаниялар",
+    energySubtitle: "Әлемдік және қазақстандық энергетикалық компаниялар",
+    globalCompanies: "Әлемдік компаниялар",
+    kazakhstanCompanies: "Қазақстандық компаниялар",
+    companyName: "Компания",
+    ticker: "Тикер",
+    currentPrice: "Ағымдағы баға",
+    priceChange: "Өзгеріс",
+    volatility: "Құбылмалылық",
+    status: "Күйі",
+    viewDetails: "Толығырақ",
+    lastUpdated: "Соңғы жаңарту",
+    totalCompanies: "Барлық компаниялар",
+    successfulFetches: "Сәтті жүктелді",
+    dataNotAvailable: "Деректер әзірше қолжетімді емес",
+    runDataCollection: "Деректерді жинау скриптін іске қосыңыз",
+    country: "Ел",
+    successRate: "Табыс коэффициенті",
+    noDataAvailable: "Деректер жоқ",
+    europe: "Еуропа",
   },
 }
 
@@ -1334,11 +1403,6 @@ export default function Home() {
       // Calculate momentum from recent price changes
       const recentChange = historicalPrices[historicalPrices.length - 1] - historicalPrices[historicalPrices.length - 5]
       const momentumSignal = recentChange / (historicalPrices[historicalPrices.length - 5] || 1) // Avoid division by zero
-
-      // Calculate volume signal
-      const volume = mockStockDataWithHistory.volume || 0
-      const avgVolume = mockStockDataWithHistory.avgVolume || volume
-      const volumeSignal = avgVolume === 0 ? 0 : (volume - avgVolume) / avgVolume // Avoid division by zero
 
       // Calculate support and resistance levels
       const recentPrices = historicalPrices.slice(-20)
@@ -1818,6 +1882,7 @@ ${new Date().toLocaleString("ru-RU")}
                   { key: "education", label: t("education") },
                   { key: "news", label: t("news") },
                   { key: "kztForecast", label: t("kztForecast") },
+                  { key: "energyIndustries", label: t("energyIndustries") },
                 ].map((tab) => (
                   <button
                     key={tab.key}
@@ -2901,7 +2966,7 @@ ${new Date().toLocaleString("ru-RU")}
                           {news.content.substring(0, 120)}...
                         </p>
                         <div className="flex items-center justify-between">
-                          <span className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+                          <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
                             {t("source")} {news.source}
                           </span>
                           <ExternalLink className="w-4 h-4 text-blue-600" />
@@ -3211,6 +3276,11 @@ ${new Date().toLocaleString("ru-RU")}
                 )}
               </div>
             )}
+
+          {/* EnergyIndustriesSection Component */}
+            {activeSection === "energyIndustries" && (
+              <EnergyIndustriesSection isDarkMode={isDarkMode} language={language} t={t} />
+            )}
           </div>
         </main>
       </div>
@@ -3261,6 +3331,276 @@ ${new Date().toLocaleString("ru-RU")}
                   Читать полностью
                 </a>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}  
+// New EnergyIndustriesSection component using real-time energy prices API
+function EnergyIndustriesSection({ isDarkMode, language, t }: { isDarkMode: boolean; language: string; t: (key: string) => string }) {
+  // Use useState hook for selectedCompany
+  const [selectedCompany, setSelectedCompany] = useState<CompanyInfo | null>(null)
+  const [energyData, setEnergyData] = React.useState<any>(null)
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState<string | null>(null)
+  const [selectedTab, setSelectedTab] = React.useState<'global' | 'europe'>('global')
+
+  React.useEffect(() => {
+    console.log('[v0] Loading energy market data...')
+    fetch('/api/energy')
+      .then(res => res.json())
+      .then(data => {
+        console.log('[v0] Energy data loaded:', data)
+        setEnergyData(data)
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error('[v0] Error loading energy data:', err)
+        setError(err.message)
+        setLoading(false)
+      })
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    )
+  }
+
+  if (error || !energyData) {
+    return (
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+        <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl p-8 text-center`}>
+          <h2 className="text-2xl font-bold mb-4">Данные недоступны</h2>
+          <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>{error || 'Не удалось загрузить данные'}</p>
+        </div>
+      </div>
+    )
+  }
+
+  const globalCompanies = energyData.global || []
+  // Replaced kazakhstanCompanies with europeCompanies
+  const europeCompanies = energyData.europe || []
+  // Replaced kazakhstanCompanies with europeCompanies
+  const displayedCompanies = selectedTab === 'global' ? globalCompanies : europeCompanies
+
+  return (
+    <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">
+          {language === 'ru' ? 'Энергетика' : language === 'en' ? 'Energy Industries' : 'Энергетика'}
+        </h1>
+        <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+          {/* Updated subtitle for Europe */}
+          {language === 'ru'
+            ? 'Мировые и европейские энергетические компании в режиме реального времени'
+            : language === 'en'
+            ? 'Global and European energy companies in real-time'
+            : 'Әлемдік және еуропалық энергетикалық компаниялар нақты уақытта'}
+        </p>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className={`${isDarkMode ? 'bg-gradient-to-br from-blue-900 to-blue-800' : 'bg-gradient-to-br from-blue-100 to-blue-50'} rounded-xl p-6 shadow-lg`}>
+          <div className={`text-sm font-medium ${isDarkMode ? 'text-blue-200' : 'text-blue-700'} mb-2`}>
+            {language === 'ru' ? 'Всего компаний' : 'Total Companies'}
+          </div>
+          <div className="text-3xl font-bold">{energyData.totalCompanies || 0}</div>
+        </div>
+        <div className={`${isDarkMode ? 'bg-gradient-to-br from-green-900 to-green-800' : 'bg-gradient-to-br from-green-100 to-green-50'} rounded-xl p-6 shadow-lg`}>
+          <div className={`text-sm font-medium ${isDarkMode ? 'text-green-200' : 'text-green-700'} mb-2`}>
+            {language === 'ru' ? 'Мировые' : 'Global'}
+          </div>
+          <div className="text-3xl font-bold">{globalCompanies.length}</div>
+        </div>
+        <div className={`${isDarkMode ? 'bg-gradient-to-br from-purple-900 to-purple-800' : 'bg-gradient-to-br from-purple-100 to-purple-50'} rounded-xl p-6 shadow-lg`}>
+          <div className={`text-sm font-medium ${isDarkMode ? 'text-purple-200' : 'text-purple-700'} mb-2`}>
+            {/* Updated label for Europe */}
+            {language === 'ru' ? 'Европа' : 'Europe'}
+          </div>
+          <div className="text-3xl font-bold">{europeCompanies.length}</div>
+        </div>
+        <div className={`${isDarkMode ? 'bg-gradient-to-br from-orange-900 to-orange-800' : 'bg-gradient-to-br from-orange-100 to-orange-50'} rounded-xl p-6 shadow-lg`}>
+          <div className={`text-sm font-medium ${isDarkMode ? 'text-orange-200' : 'text-orange-700'} mb-2`}>
+            {language === 'ru' ? 'Успешность' : 'Success Rate'}
+          </div>
+          <div className="text-2xl font-bold">{energyData.successRate || '0%'}</div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-4 mb-6">
+        <button
+          onClick={() => setSelectedTab('global')}
+          className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+            selectedTab === 'global'
+              ? isDarkMode ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
+              : isDarkMode ? 'bg-gray-800 text-gray-400 hover:bg-gray-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          🌍 {language === 'ru' ? 'Мировые компании' : 'Global Companies'}
+        </button>
+        <button
+          onClick={() => setSelectedTab('europe')}
+          className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+            selectedTab === 'europe'
+              ? isDarkMode ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
+              : isDarkMode ? 'bg-gray-800 text-gray-400 hover:bg-gray-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          {/* Updated flag and label for Europe */}
+          🇪🇺 {language === 'ru' ? 'Европа' : 'Europe'}
+        </button>
+      </div>
+
+      {/* Companies Table */}
+      <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-lg overflow-hidden`}>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className={isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}>
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  {language === 'ru' ? 'Компания' : 'Company'}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  {language === 'ru' ? 'Тикер' : 'Ticker'}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  {language === 'ru' ? 'Цена' : 'Price'}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  {language === 'ru' ? 'Изменение' : 'Change'}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  {language === 'ru' ? 'Объем' : 'Volume'}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  {language === 'ru' ? 'Страна' : 'Country'}
+                </th>
+              </tr>
+            </thead>
+            <tbody className={`divide-y ${isDarkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
+              {displayedCompanies.length > 0 ? displayedCompanies.map((company: any, idx: number) => (
+                <tr
+                  key={idx}
+                  className={`${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'} transition-colors`}
+                >
+                  <td className="px-6 py-4 whitespace-nowrap font-medium">
+                    <button
+                      onClick={() => handleCompanyClick(company.ticker)}
+                      className={`hover:underline ${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'} transition-colors`}
+                    >
+                      {company.name}
+                    </button>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <code className={`px-2 py-1 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                      {company.ticker}
+                    </code>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap font-semibold">
+                    {company.price ? `${company.price.toFixed(2)} ${company.currency}` : 'N/A'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {company.changePercent !== undefined ? (
+                      <span className={company.changePercent >= 0 ? 'text-green-500' : 'text-red-500'}>
+                        {company.changePercent >= 0 ? '▲' : '▼'} {Math.abs(company.changePercent).toFixed(2)}%
+                      </span>
+                    ) : 'N/A'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {company.volume ? company.volume.toLocaleString() : 'N/A'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    {company.country}
+                  </td>
+                </tr>
+              )) : (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                    {language === 'ru' ? 'Нет данных' : 'No data available'}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Last Updated */}
+      <div className={`mt-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-center`}>
+        {language === 'ru' ? 'Последнее обновление:' : 'Last updated:'} {new Date(energyData.lastUpdated).toLocaleString(language === 'ru' ? 'ru-RU' : 'en-US')}
+      </div>
+
+      {selectedCompany && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          onClick={() => setSelectedCompany(null)}
+        >
+          <div
+            className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-2xl max-w-2xl w-full p-8 transform transition-all`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <div className="text-5xl">{selectedCompany.flag}</div>
+                <div>
+                  <h2 className="text-3xl font-bold mb-1">{selectedCompany.name}</h2>
+                  <div className="flex items-center gap-3">
+                    <code className={`px-3 py-1 rounded-lg text-sm font-mono ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                      {selectedCompany.ticker}
+                    </code>
+                    <span className={`px-3 py-1 rounded-lg text-sm font-medium ${isDarkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-700'}`}>
+                      {selectedCompany.sector}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedCompany(null)}
+                className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'} text-2xl transition-colors`}
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Country */}
+            <div className="mb-6">
+              <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-1`}>
+                {language === 'ru' ? 'Страна' : 'Country'}
+              </div>
+              <div className="text-lg font-semibold">{selectedCompany.country}</div>
+            </div>
+
+            {/* Description */}
+            <div className="mb-6">
+              <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
+                {language === 'ru' ? 'О компании' : 'About'}
+              </div>
+              <p className={`text-base leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                {selectedCompany.description}
+              </p>
+            </div>
+
+            {/* Close button */}
+            <div className="flex justify-end">
+              <button
+                onClick={() => setSelectedCompany(null)}
+                className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                  isDarkMode
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                    : 'bg-blue-500 hover:bg-blue-600 text-white'
+                }`}
+              >
+                {language === 'ru' ? 'Закрыть' : 'Close'}
+              </button>
             </div>
           </div>
         </div>

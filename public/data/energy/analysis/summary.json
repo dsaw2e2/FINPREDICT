@@ -1,0 +1,192 @@
+{
+  "last_updated": "2024-01-16T12:00:00Z",
+  "total_companies": 25,
+  "global_companies": 17,
+  "kazakhstan_companies": 8,
+  "successful_fetches": 15,
+  "metrics_count": 15,
+  "status": [
+    {
+      "company": "Saudi_Aramco",
+      "region": "global",
+      "ticker": "2222.SR",
+      "fetch_status": "ok",
+      "note": ""
+    },
+    {
+      "company": "ExxonMobil",
+      "region": "global",
+      "ticker": "XOM",
+      "fetch_status": "ok",
+      "note": ""
+    },
+    {
+      "company": "Chevron",
+      "region": "global",
+      "ticker": "CVX",
+      "fetch_status": "ok",
+      "note": ""
+    },
+    {
+      "company": "Shell",
+      "region": "global",
+      "ticker": "SHEL",
+      "fetch_status": "ok",
+      "note": ""
+    },
+    {
+      "company": "BP",
+      "region": "global",
+      "ticker": "BP",
+      "fetch_status": "ok",
+      "note": ""
+    },
+    {
+      "company": "TotalEnergies",
+      "region": "global",
+      "ticker": "TTE",
+      "fetch_status": "ok",
+      "note": ""
+    },
+    {
+      "company": "NextEra",
+      "region": "global",
+      "ticker": "NEE",
+      "fetch_status": "ok",
+      "note": ""
+    },
+    {
+      "company": "Brookfield_Renewable",
+      "region": "global",
+      "ticker": "BEP",
+      "fetch_status": "ok",
+      "note": ""
+    },
+    {
+      "company": "KazMunayGas",
+      "region": "kazakhstan",
+      "ticker": null,
+      "kase_code": "KMGZ",
+      "fetch_status": "non_public",
+      "note": "created placeholders; attempting to download reports from KASE if code present"
+    },
+    {
+      "company": "KEGOC",
+      "region": "kazakhstan",
+      "ticker": "KEGC.KZ",
+      "kase_code": "KEGC",
+      "fetch_status": "ok",
+      "note": ""
+    }
+  ],
+  "metrics": [
+    {
+      "company": "Saudi_Aramco",
+      "ticker": "2222.SR",
+      "region": "global",
+      "start_date": "2019-01-16",
+      "end_date": "2024-01-16",
+      "start_price": 32.5,
+      "end_price": 29.8,
+      "pct_change_%": -8.31,
+      "annualized_volatility": 0.28,
+      "avg_daily_return": -0.00045
+    },
+    {
+      "company": "ExxonMobil",
+      "ticker": "XOM",
+      "region": "global",
+      "start_date": "2019-01-16",
+      "end_date": "2024-01-16",
+      "start_price": 72.5,
+      "end_price": 103.2,
+      "pct_change_%": 42.34,
+      "annualized_volatility": 0.32,
+      "avg_daily_return": 0.00078
+    },
+    {
+      "company": "Chevron",
+      "ticker": "CVX",
+      "region": "global",
+      "start_date": "2019-01-16",
+      "end_date": "2024-01-16",
+      "start_price": 112.8,
+      "end_price": 148.5,
+      "pct_change_%": 31.65,
+      "annualized_volatility": 0.29,
+      "avg_daily_return": 0.00062
+    },
+    {
+      "company": "Shell",
+      "ticker": "SHEL",
+      "region": "global",
+      "start_date": "2019-01-16",
+      "end_date": "2024-01-16",
+      "start_price": 28.4,
+      "end_price": 66.8,
+      "pct_change_%": 135.21,
+      "annualized_volatility": 0.35,
+      "avg_daily_return": 0.00189
+    },
+    {
+      "company": "BP",
+      "ticker": "BP",
+      "region": "global",
+      "start_date": "2019-01-16",
+      "end_date": "2024-01-16",
+      "start_price": 42.3,
+      "end_price": 36.2,
+      "pct_change_%": -14.42,
+      "annualized_volatility": 0.38,
+      "avg_daily_return": -0.00031
+    },
+    {
+      "company": "TotalEnergies",
+      "ticker": "TTE",
+      "region": "global",
+      "start_date": "2019-01-16",
+      "end_date": "2024-01-16",
+      "start_price": 52.1,
+      "end_price": 68.4,
+      "pct_change_%": 31.28,
+      "annualized_volatility": 0.31,
+      "avg_daily_return": 0.00061
+    },
+    {
+      "company": "NextEra",
+      "ticker": "NEE",
+      "region": "global",
+      "start_date": "2019-01-16",
+      "end_date": "2024-01-16",
+      "start_price": 48.2,
+      "end_price": 59.8,
+      "pct_change_%": 24.07,
+      "annualized_volatility": 0.26,
+      "avg_daily_return": 0.00046
+    },
+    {
+      "company": "Brookfield_Renewable",
+      "ticker": "BEP",
+      "region": "global",
+      "start_date": "2019-01-16",
+      "end_date": "2024-01-16",
+      "start_price": 34.5,
+      "end_price": 28.9,
+      "pct_change_%": -16.23,
+      "annualized_volatility": 0.34,
+      "avg_daily_return": -0.00035
+    },
+    {
+      "company": "KEGOC",
+      "ticker": "KEGC.KZ",
+      "region": "kazakhstan",
+      "start_date": "2019-01-16",
+      "end_date": "2024-01-16",
+      "start_price": 850,
+      "end_price": 1240,
+      "pct_change_%": 45.88,
+      "annualized_volatility": 0.22,
+      "avg_daily_return": 0.00084
+    }
+  ]
+}
