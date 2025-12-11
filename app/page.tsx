@@ -14,8 +14,7 @@ import {
   Legend,
 } from "recharts"
 import React from "react" // Import React for using JSX in the new component
-import { energyCompaniesInfo, type CompanyInfo } from '@/lib/energy-companies-info' // Import energy companies info
-import { useTheme } from 'next-themes' // Import useTheme for theme context
+import type { CompanyInfo } from "@/lib/energy-companies-info" // Import energy companies info
 
 const BarChart3 = () => (
   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -23,7 +22,7 @@ const BarChart3 = () => (
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={2}
-      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
     />
   </svg>
 )
@@ -1435,10 +1434,20 @@ export default function Home() {
         volatility: Number((volatility * 100).toFixed(2)), // Percentage
       }
 
+      const volumeSignal =
+        mockStockDataWithHistory.avgVolume === 0
+          ? 0
+          : mockStockDataWithHistory.volume / mockStockDataWithHistory.avgVolume - 1 // Ratio of current volume to average volume
+
       const marketFactors = {
-        volume: volume,
-        avgVolume: avgVolume,
-        volumeRatio: Number((avgVolume === 0 ? 0 : (volume / avgVolume) * 100).toFixed(1)),
+        volume: mockStockDataWithHistory.volume, // Corrected: Use mockStockDataWithHistory.volume
+        avgVolume: mockStockDataWithHistory.avgVolume, // Corrected: Use mockStockDataWithHistory.avgVolume
+        volumeRatio: Number(
+          (mockStockDataWithHistory.avgVolume === 0
+            ? 0
+            : (mockStockDataWithHistory.volume / mockStockDataWithHistory.avgVolume) * 100
+          ).toFixed(1),
+        ),
         trend: trendStrength > 0.01 ? "Uptrend" : trendStrength < -0.01 ? "Downtrend" : "Sideways",
         trendStrength: Number((Math.abs(trendStrength) * 100).toFixed(2)),
         week52Low: week52Low,
@@ -1519,7 +1528,7 @@ export default function Home() {
           const dailyPredictions = generateDailyPredictions(targetPrice, 0.7)
 
           const analysisArguments = [
-            `Объем торгов ${volume.toLocaleString()} ${volume > avgVolume ? "превышает" : "ниже"} средний объем (${avgVolume.toLocaleString()}) на ${Math.abs(((volume - avgVolume) / avgVolume) * 100).toFixed(1)}%`,
+            `Объем торгов ${mockStockDataWithHistory.volume.toLocaleString()} ${mockStockDataWithHistory.volume > mockStockDataWithHistory.avgVolume ? "превышает" : "ниже"} средний объем (${mockStockDataWithHistory.avgVolume.toLocaleString()}) на ${Math.abs(((mockStockDataWithHistory.volume - mockStockDataWithHistory.avgVolume) / mockStockDataWithHistory.avgVolume) * 100).toFixed(1)}%`,
             `Тренд ${technicalAnalysis.pricePosition.toLowerCase()} с силой изменения ${Math.abs(trendStrength * 100).toFixed(2)}% за период`,
             `Цена находится на ${currentVsLow.toFixed(1)}% от 52-недельного минимума к максимуму`,
             `Индикатор MACD показывает ${technicalAnalysis.macdSignal.toLowerCase()}`,
@@ -1721,42 +1730,42 @@ ${new Date().toLocaleString("ru-RU")}
     setSelectedNews(null)
   }
 
-  const loadMoreNews = async () => {
-    if (newsLoading || !hasMoreNews) return
-
+  // Updated news grid with real article data
+  const refreshNewsData = async () => {
     setNewsLoading(true)
     try {
-      const response = await fetch(`/api/news?page=${newsPage + 1}&limit=6`)
+      const response = await fetch("/api/news/list?page=1&limit=20")
       const data = await response.json()
 
-      if (data.news && data.news.length > 0) {
-        setNewsData((prev) => [...prev, ...data.news])
-        setNewsPage((prev) => prev + 1)
-        setHasMoreNews(data.hasMore)
-      } else {
-        setHasMoreNews(false)
+      if (data.success) {
+        setNewsData(data.articles)
+        setNewsPage(1)
+        setHasMoreNews(data.pagination.page < data.pagination.total_pages)
+        setLastNewsUpdate(Date.now())
       }
     } catch (error) {
-      console.error("Error loading more news:", error)
+      console.error("[v0] Error refreshing news:", error)
     } finally {
       setNewsLoading(false)
     }
   }
 
-  const refreshNewsData = async () => {
+  const loadMoreNews = async () => {
+    if (newsLoading || !hasMoreNews) return
+
     setNewsLoading(true)
     try {
-      const response = await fetch("/api/news?page=0&limit=6")
+      const nextPage = newsPage + 1
+      const response = await fetch(`/api/news/list?page=${nextPage}&limit=20`)
       const data = await response.json()
 
-      if (data.news) {
-        setNewsData(data.news)
-        setNewsPage(0)
-        setHasMoreNews(data.hasMore)
-        setLastNewsUpdate(Date.now())
+      if (data.success) {
+        setNewsData([...newsData, ...data.articles])
+        setNewsPage(nextPage)
+        setHasMoreNews(data.pagination.page < data.pagination.total_pages)
       }
     } catch (error) {
-      console.error("Error refreshing news:", error)
+      console.error("[v0] Error loading more news:", error)
     } finally {
       setNewsLoading(false)
     }
@@ -2912,92 +2921,118 @@ ${new Date().toLocaleString("ru-RU")}
                   <h2 className={`text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
                     {t("marketNews")}
                   </h2>
-                  <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>{t("stayUpdated")}</p>
-                </div>
-
-                <div className="flex justify-center">
-                  <button
-                    onClick={refreshNewsData}
-                    disabled={newsLoading}
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 transition-all"
-                  >
-                    <div className="flex items-center space-x-2">
-                      {newsLoading && (
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      )}
-                      <span>
-                        {newsLoading
-                          ? language === "ru"
-                            ? "Загрузка..."
-                            : language === "kk" // Changed kz to kk
-                              ? "Жүктелуде..."
-                              : "Loading..."
-                          : t("refreshNews")}
-                      </span>
-                    </div>
-                  </button>
+                  <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
+                    Latest financial news from Bloomberg, Reuters, CNBC, and more
+                  </p>
+                  {lastNewsUpdate && (
+                    <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+                      Updated {Math.floor((Date.now() - lastNewsUpdate) / 60000)} minutes ago
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {newsData.map((news: any) => (
+                  {newsData.map((article: any) => (
                     <div
-                      key={news.id}
-                      className={`rounded-xl p-6 shadow-sm border transition-all hover:shadow-md cursor-pointer ${
+                      key={article.id}
+                      className={`rounded-xl overflow-hidden shadow-sm border transition-all hover:shadow-md cursor-pointer ${
                         isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"
                       }`}
-                      onClick={() => viewArticle(news)}
+                      onClick={() => window.open(article.url, "_blank")}
                     >
-                      <div className="space-y-3">
-                        <div className="flex items-start justify-between">
-                          <span className={`font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                            {news.ticker}
-                          </span>
-                          <span className={`font-medium ${news.isPositive ? "text-green-600" : "text-red-600"}`}>
-                            {news.change}
-                          </span>
-                          <span className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
-                            {news.time}
-                          </span>
+                      {article.image_url && (
+                        <div className="relative w-full h-48">
+                          <img
+                            src={article.image_url || "/placeholder.svg"}
+                            alt={article.title}
+                            className="w-full h-full object-cover"
+                          />
+                          {article.is_pinned && (
+                            <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded text-xs font-bold">
+                              Pinned
+                            </div>
+                          )}
                         </div>
-                        <h4 className={`font-medium text-sm ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                          {news.title}
-                        </h4>
-                        <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                          {news.content.substring(0, 120)}...
-                        </p>
+                      )}
+                      <div className="p-5 space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
-                            {t("source")} {news.source}
+                          <span className={`text-sm font-medium ${isDarkMode ? "text-blue-400" : "text-blue-600"}`}>
+                            {article.source}
                           </span>
-                          <ExternalLink className="w-4 h-4 text-blue-600" />
+                          {article.sentiment && (
+                            <span
+                              className={`text-xs px-2 py-1 rounded ${
+                                article.sentiment === "positive"
+                                  ? "bg-green-100 text-green-700"
+                                  : article.sentiment === "negative"
+                                    ? "bg-red-100 text-red-700"
+                                    : "bg-gray-100 text-gray-700"
+                              }`}
+                            >
+                              {article.sentiment}
+                            </span>
+                          )}
+                        </div>
+
+                        <h4
+                          className={`font-semibold text-base line-clamp-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                        >
+                          {article.title}
+                        </h4>
+
+                        {article.description && (
+                          <p className={`text-sm line-clamp-3 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                            {article.description}
+                          </p>
+                        )}
+
+                        <div className="flex items-center justify-between pt-2">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {article.tickers?.slice(0, 3).map((ticker: string) => (
+                              <span
+                                key={ticker}
+                                className={`text-xs px-2 py-1 rounded ${
+                                  isDarkMode ? "bg-gray-700 text-gray-300" : "bg-gray-100 text-gray-700"
+                                }`}
+                              >
+                                {ticker}
+                              </span>
+                            ))}
+                          </div>
+                          <span className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>
+                            {new Date(article.published_at).toLocaleDateString()}
+                          </span>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
 
+                {newsData.length === 0 && !newsLoading && (
+                  <div className="text-center py-12">
+                    <p className={isDarkMode ? "text-gray-400" : "text-gray-600"}>
+                      No news available. Click refresh to fetch latest articles.
+                    </p>
+                  </div>
+                )}
+
                 {newsData.length > 0 && hasMoreNews && (
                   <div className="flex justify-center">
                     <button
                       onClick={loadMoreNews}
                       disabled={newsLoading}
-                      className="bg-gray-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-700 disabled:opacity-50 transition-all"
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 transition-all"
                     >
-                      <div className="flex items-center space-x-2">
-                        {newsLoading && (
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        )}
-                        <span>
-                          {newsLoading
-                            ? language === "ru"
-                              ? "Загрузка..."
-                              : language === "kk" // Changed kz to kk
-                                ? "Жүктелуде..."
-                                : "Loading..."
-                            : t("loadMoreNews")}
-                        </span>
-                      </div>
+                      {newsLoading ? "Loading more..." : "Load More Articles"}
                     </button>
+                  </div>
+                )}
+
+                {newsData.length > 0 && !hasMoreNews && (
+                  <div className="text-center py-4">
+                    <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+                      No more articles to load
+                    </p>
                   </div>
                 )}
               </div>
@@ -3277,7 +3312,7 @@ ${new Date().toLocaleString("ru-RU")}
               </div>
             )}
 
-          {/* EnergyIndustriesSection Component */}
+            {/* EnergyIndustriesSection Component */}
             {activeSection === "energyIndustries" && (
               <EnergyIndustriesSection isDarkMode={isDarkMode} language={language} t={t} />
             )}
@@ -3337,27 +3372,31 @@ ${new Date().toLocaleString("ru-RU")}
       )}
     </div>
   )
-}  
+}
 // New EnergyIndustriesSection component using real-time energy prices API
-function EnergyIndustriesSection({ isDarkMode, language, t }: { isDarkMode: boolean; language: string; t: (key: string) => string }) {
+function EnergyIndustriesSection({
+  isDarkMode,
+  language,
+  t,
+}: { isDarkMode: boolean; language: string; t: (key: string) => string }) {
   // Use useState hook for selectedCompany
   const [selectedCompany, setSelectedCompany] = useState<CompanyInfo | null>(null)
   const [energyData, setEnergyData] = React.useState<any>(null)
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
-  const [selectedTab, setSelectedTab] = React.useState<'global' | 'europe'>('global')
+  const [selectedTab, setSelectedTab] = React.useState<"global" | "europe">("global")
 
   React.useEffect(() => {
-    console.log('[v0] Loading energy market data...')
-    fetch('/api/energy')
-      .then(res => res.json())
-      .then(data => {
-        console.log('[v0] Energy data loaded:', data)
+    console.log("[v0] Loading energy market data...")
+    fetch("/api/energy")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("[v0] Energy data loaded:", data)
         setEnergyData(data)
         setLoading(false)
       })
-      .catch(err => {
-        console.error('[v0] Error loading energy data:', err)
+      .catch((err) => {
+        console.error("[v0] Error loading energy data:", err)
         setError(err.message)
         setLoading(false)
       })
@@ -3373,10 +3412,10 @@ function EnergyIndustriesSection({ isDarkMode, language, t }: { isDarkMode: bool
 
   if (error || !energyData) {
     return (
-      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-        <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl p-8 text-center`}>
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+        <div className={`${isDarkMode ? "bg-gray-800" : "bg-white"} rounded-2xl p-8 text-center`}>
           <h2 className="text-2xl font-bold mb-4">Данные недоступны</h2>
-          <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>{error || 'Не удалось загрузить данные'}</p>
+          <p className={isDarkMode ? "text-gray-400" : "text-gray-600"}>{error || "Не удалось загрузить данные"}</p>
         </div>
       </div>
     )
@@ -3386,145 +3425,170 @@ function EnergyIndustriesSection({ isDarkMode, language, t }: { isDarkMode: bool
   // Replaced kazakhstanCompanies with europeCompanies
   const europeCompanies = energyData.europe || []
   // Replaced kazakhstanCompanies with europeCompanies
-  const displayedCompanies = selectedTab === 'global' ? globalCompanies : europeCompanies
+  const displayedCompanies = selectedTab === "global" ? globalCompanies : europeCompanies
+
+  const handleCompanyClick = (ticker: string) => {
+    const company = displayedCompanies.find((c) => c.ticker === ticker)
+    if (company) {
+      setSelectedCompany(company)
+    }
+  }
 
   return (
-    <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+    <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">
-          {language === 'ru' ? 'Энергетика' : language === 'en' ? 'Energy Industries' : 'Энергетика'}
+          {language === "ru" ? "Энергетика" : language === "en" ? "Energy Industries" : "Энергетика"}
         </h1>
-        <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+        <p className={`text-lg ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
           {/* Updated subtitle for Europe */}
-          {language === 'ru'
-            ? 'Мировые и европейские энергетические компании в режиме реального времени'
-            : language === 'en'
-            ? 'Global and European energy companies in real-time'
-            : 'Әлемдік және еуропалық энергетикалық компаниялар нақты уақытта'}
+          {language === "ru"
+            ? "Мировые и европейские энергетические компании в режиме реального времени"
+            : language === "en"
+              ? "Global and European energy companies in real-time"
+              : "Әлемдік және еуропалық энергетикалық компаниялар нақты уақытта"}
         </p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className={`${isDarkMode ? 'bg-gradient-to-br from-blue-900 to-blue-800' : 'bg-gradient-to-br from-blue-100 to-blue-50'} rounded-xl p-6 shadow-lg`}>
-          <div className={`text-sm font-medium ${isDarkMode ? 'text-blue-200' : 'text-blue-700'} mb-2`}>
-            {language === 'ru' ? 'Всего компаний' : 'Total Companies'}
+        <div
+          className={`${isDarkMode ? "bg-gradient-to-br from-blue-900 to-blue-800" : "bg-gradient-to-br from-blue-100 to-blue-50"} rounded-xl p-6 shadow-lg`}
+        >
+          <div className={`text-sm font-medium ${isDarkMode ? "text-blue-200" : "text-blue-700"} mb-2`}>
+            {language === "ru" ? "Всего компаний" : "Total Companies"}
           </div>
           <div className="text-3xl font-bold">{energyData.totalCompanies || 0}</div>
         </div>
-        <div className={`${isDarkMode ? 'bg-gradient-to-br from-green-900 to-green-800' : 'bg-gradient-to-br from-green-100 to-green-50'} rounded-xl p-6 shadow-lg`}>
-          <div className={`text-sm font-medium ${isDarkMode ? 'text-green-200' : 'text-green-700'} mb-2`}>
-            {language === 'ru' ? 'Мировые' : 'Global'}
+        <div
+          className={`${isDarkMode ? "bg-gradient-to-br from-green-900 to-green-800" : "bg-gradient-to-br from-green-100 to-green-50"} rounded-xl p-6 shadow-lg`}
+        >
+          <div className={`text-sm font-medium ${isDarkMode ? "text-green-200" : "text-green-700"} mb-2`}>
+            {language === "ru" ? "Мировые" : "Global"}
           </div>
           <div className="text-3xl font-bold">{globalCompanies.length}</div>
         </div>
-        <div className={`${isDarkMode ? 'bg-gradient-to-br from-purple-900 to-purple-800' : 'bg-gradient-to-br from-purple-100 to-purple-50'} rounded-xl p-6 shadow-lg`}>
-          <div className={`text-sm font-medium ${isDarkMode ? 'text-purple-200' : 'text-purple-700'} mb-2`}>
+        <div
+          className={`${isDarkMode ? "bg-gradient-to-br from-purple-900 to-purple-800" : "bg-gradient-to-br from-purple-100 to-purple-50"} rounded-xl p-6 shadow-lg`}
+        >
+          <div className={`text-sm font-medium ${isDarkMode ? "text-purple-200" : "text-purple-700"} mb-2`}>
             {/* Updated label for Europe */}
-            {language === 'ru' ? 'Европа' : 'Europe'}
+            {language === "ru" ? "Европа" : "Europe"}
           </div>
           <div className="text-3xl font-bold">{europeCompanies.length}</div>
         </div>
-        <div className={`${isDarkMode ? 'bg-gradient-to-br from-orange-900 to-orange-800' : 'bg-gradient-to-br from-orange-100 to-orange-50'} rounded-xl p-6 shadow-lg`}>
-          <div className={`text-sm font-medium ${isDarkMode ? 'text-orange-200' : 'text-orange-700'} mb-2`}>
-            {language === 'ru' ? 'Успешность' : 'Success Rate'}
+        <div
+          className={`${isDarkMode ? "bg-gradient-to-br from-orange-900 to-orange-800" : "bg-gradient-to-br from-orange-100 to-orange-50"} rounded-xl p-6 shadow-lg`}
+        >
+          <div className={`text-sm font-medium ${isDarkMode ? "text-orange-200" : "text-orange-700"} mb-2`}>
+            {language === "ru" ? "Успешность" : "Success Rate"}
           </div>
-          <div className="text-2xl font-bold">{energyData.successRate || '0%'}</div>
+          <div className="text-2xl font-bold">{energyData.successRate || "0%"}</div>
         </div>
       </div>
 
       {/* Tabs */}
       <div className="flex gap-4 mb-6">
         <button
-          onClick={() => setSelectedTab('global')}
+          onClick={() => setSelectedTab("global")}
           className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-            selectedTab === 'global'
-              ? isDarkMode ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
-              : isDarkMode ? 'bg-gray-800 text-gray-400 hover:bg-gray-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            selectedTab === "global"
+              ? isDarkMode
+                ? "bg-blue-600 text-white"
+                : "bg-blue-500 text-white"
+              : isDarkMode
+                ? "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
           }`}
         >
-          🌍 {language === 'ru' ? 'Мировые компании' : 'Global Companies'}
+          🌍 {language === "ru" ? "Мировые компании" : "Global Companies"}
         </button>
         <button
-          onClick={() => setSelectedTab('europe')}
+          onClick={() => setSelectedTab("europe")}
           className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-            selectedTab === 'europe'
-              ? isDarkMode ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
-              : isDarkMode ? 'bg-gray-800 text-gray-400 hover:bg-gray-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            selectedTab === "europe"
+              ? isDarkMode
+                ? "bg-blue-600 text-white"
+                : "bg-blue-500 text-white"
+              : isDarkMode
+                ? "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
           }`}
         >
           {/* Updated flag and label for Europe */}
-          🇪🇺 {language === 'ru' ? 'Европа' : 'Europe'}
+          🇪🇺 {language === "ru" ? "Европа" : "Europe"}
         </button>
       </div>
 
       {/* Companies Table */}
-      <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-lg overflow-hidden`}>
+      <div className={`${isDarkMode ? "bg-gray-800" : "bg-white"} rounded-xl shadow-lg overflow-hidden`}>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className={isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}>
+            <thead className={isDarkMode ? "bg-gray-700" : "bg-gray-50"}>
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  {language === 'ru' ? 'Компания' : 'Company'}
+                  {language === "ru" ? "Компания" : "Company"}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  {language === 'ru' ? 'Тикер' : 'Ticker'}
+                  {language === "ru" ? "Тикер" : "Ticker"}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  {language === 'ru' ? 'Цена' : 'Price'}
+                  {language === "ru" ? "Цена" : "Price"}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  {language === 'ru' ? 'Изменение' : 'Change'}
+                  {language === "ru" ? "Изменение" : "Change"}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  {language === 'ru' ? 'Объем' : 'Volume'}
+                  {language === "ru" ? "Объем" : "Volume"}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  {language === 'ru' ? 'Страна' : 'Country'}
+                  {language === "ru" ? "Страна" : "Country"}
                 </th>
               </tr>
             </thead>
-            <tbody className={`divide-y ${isDarkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
-              {displayedCompanies.length > 0 ? displayedCompanies.map((company: any, idx: number) => (
-                <tr
-                  key={idx}
-                  className={`${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'} transition-colors`}
-                >
-                  <td className="px-6 py-4 whitespace-nowrap font-medium">
-                    <button
-                      onClick={() => handleCompanyClick(company.ticker)}
-                      className={`hover:underline ${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'} transition-colors`}
-                    >
-                      {company.name}
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <code className={`px-2 py-1 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
-                      {company.ticker}
-                    </code>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap font-semibold">
-                    {company.price ? `${company.price.toFixed(2)} ${company.currency}` : 'N/A'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {company.changePercent !== undefined ? (
-                      <span className={company.changePercent >= 0 ? 'text-green-500' : 'text-red-500'}>
-                        {company.changePercent >= 0 ? '▲' : '▼'} {Math.abs(company.changePercent).toFixed(2)}%
-                      </span>
-                    ) : 'N/A'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {company.volume ? company.volume.toLocaleString() : 'N/A'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    {company.country}
-                  </td>
-                </tr>
-              )) : (
+            <tbody className={`divide-y ${isDarkMode ? "divide-gray-700" : "divide-gray-200"}`}>
+              {displayedCompanies.length > 0 ? (
+                displayedCompanies.map((company: any, idx: number) => (
+                  <tr
+                    key={idx}
+                    className={`${isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-50"} transition-colors`}
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap font-medium">
+                      <button
+                        onClick={() => handleCompanyClick(company.ticker)}
+                        className={`hover:underline ${isDarkMode ? "text-blue-400 hover:text-blue-300" : "text-blue-600 hover:text-blue-700"} transition-colors`}
+                      >
+                        {company.name}
+                      </button>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <code className={`px-2 py-1 rounded ${isDarkMode ? "bg-gray-700" : "bg-gray-100"}`}>
+                        {company.ticker}
+                      </code>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap font-semibold">
+                      {company.price ? `${company.price.toFixed(2)} ${company.currency}` : "N/A"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {company.changePercent !== undefined ? (
+                        <span className={company.changePercent >= 0 ? "text-green-500" : "text-red-500"}>
+                          {company.changePercent >= 0 ? "▲" : "▼"} {Math.abs(company.changePercent).toFixed(2)}%
+                        </span>
+                      ) : (
+                        "N/A"
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {company.volume ? company.volume.toLocaleString() : "N/A"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">{company.country}</td>
+                  </tr>
+                ))
+              ) : (
                 <tr>
                   <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
-                    {language === 'ru' ? 'Нет данных' : 'No data available'}
+                    {language === "ru" ? "Нет данных" : "No data available"}
                   </td>
                 </tr>
               )}
@@ -3534,8 +3598,9 @@ function EnergyIndustriesSection({ isDarkMode, language, t }: { isDarkMode: bool
       </div>
 
       {/* Last Updated */}
-      <div className={`mt-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-center`}>
-        {language === 'ru' ? 'Последнее обновление:' : 'Last updated:'} {new Date(energyData.lastUpdated).toLocaleString(language === 'ru' ? 'ru-RU' : 'en-US')}
+      <div className={`mt-4 text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"} text-center`}>
+        {language === "ru" ? "Последнее обновление:" : "Last updated:"}{" "}
+        {new Date(energyData.lastUpdated).toLocaleString(language === "ru" ? "ru-RU" : "en-US")}
       </div>
 
       {selectedCompany && (
@@ -3544,7 +3609,7 @@ function EnergyIndustriesSection({ isDarkMode, language, t }: { isDarkMode: bool
           onClick={() => setSelectedCompany(null)}
         >
           <div
-            className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-2xl max-w-2xl w-full p-8 transform transition-all`}
+            className={`${isDarkMode ? "bg-gray-800" : "bg-white"} rounded-2xl shadow-2xl max-w-2xl w-full p-8 transform transition-all`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -3554,10 +3619,14 @@ function EnergyIndustriesSection({ isDarkMode, language, t }: { isDarkMode: bool
                 <div>
                   <h2 className="text-3xl font-bold mb-1">{selectedCompany.name}</h2>
                   <div className="flex items-center gap-3">
-                    <code className={`px-3 py-1 rounded-lg text-sm font-mono ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                    <code
+                      className={`px-3 py-1 rounded-lg text-sm font-mono ${isDarkMode ? "bg-gray-700" : "bg-gray-100"}`}
+                    >
                       {selectedCompany.ticker}
                     </code>
-                    <span className={`px-3 py-1 rounded-lg text-sm font-medium ${isDarkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-700'}`}>
+                    <span
+                      className={`px-3 py-1 rounded-lg text-sm font-medium ${isDarkMode ? "bg-blue-900 text-blue-200" : "bg-blue-100 text-blue-700"}`}
+                    >
                       {selectedCompany.sector}
                     </span>
                   </div>
@@ -3565,7 +3634,7 @@ function EnergyIndustriesSection({ isDarkMode, language, t }: { isDarkMode: bool
               </div>
               <button
                 onClick={() => setSelectedCompany(null)}
-                className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'} text-2xl transition-colors`}
+                className={`${isDarkMode ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"} text-2xl transition-colors`}
               >
                 ×
               </button>
@@ -3573,18 +3642,18 @@ function EnergyIndustriesSection({ isDarkMode, language, t }: { isDarkMode: bool
 
             {/* Country */}
             <div className="mb-6">
-              <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-1`}>
-                {language === 'ru' ? 'Страна' : 'Country'}
+              <div className={`text-sm font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-1`}>
+                {language === "ru" ? "Страна" : "Country"}
               </div>
               <div className="text-lg font-semibold">{selectedCompany.country}</div>
             </div>
 
             {/* Description */}
             <div className="mb-6">
-              <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
-                {language === 'ru' ? 'О компании' : 'About'}
+              <div className={`text-sm font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-2`}>
+                {language === "ru" ? "О компании" : "About"}
               </div>
-              <p className={`text-base leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+              <p className={`text-base leading-relaxed ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                 {selectedCompany.description}
               </p>
             </div>
@@ -3594,12 +3663,10 @@ function EnergyIndustriesSection({ isDarkMode, language, t }: { isDarkMode: bool
               <button
                 onClick={() => setSelectedCompany(null)}
                 className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-                  isDarkMode
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                    : 'bg-blue-500 hover:bg-blue-600 text-white'
+                  isDarkMode ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-blue-500 hover:bg-blue-600 text-white"
                 }`}
               >
-                {language === 'ru' ? 'Закрыть' : 'Close'}
+                {language === "ru" ? "Закрыть" : "Close"}
               </button>
             </div>
           </div>

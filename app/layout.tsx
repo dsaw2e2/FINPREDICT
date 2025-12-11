@@ -1,15 +1,21 @@
-import type { Metadata } from 'next'
-import { GeistSans } from 'geist/font/sans'
-import { GeistMono } from 'geist/font/mono'
-import { Analytics } from '@vercel/analytics/next'
-import './globals.css'
+import type React from "react"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import { Analytics } from "@vercel/analytics/next"
+import "./globals.css"
+
+const inter = Inter({
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-sans",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: "FinPredict - Прогнозирование финансовых рынков",
+  description: "Анализ и прогнозирование акций, валют и энергетических компаний с использованием машинного обучения",
+  generator: "v0.app",
   icons: {
-    icon: '/icon.svg',
+    icon: "/icon.svg",
   },
 }
 
@@ -19,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={`font-sans antialiased ${GeistSans.variable} ${GeistMono.variable}`}>
+    <html lang="ru">
+      <body className={`font-sans antialiased ${inter.variable}`}>
         {children}
         <Analytics />
       </body>
