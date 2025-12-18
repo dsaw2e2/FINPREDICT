@@ -98,46 +98,6 @@ export async function fetchYahooFinanceNews(tickers: string[]): Promise<NewsArti
   return articles
 }
 
-// NewsAPI.org Integration
-export async function fetchNewsAPI(apiKey: string | undefined, tickers: string[]): Promise<NewsArticle[]> {
-  if (!apiKey) return []
-
-  const articles: NewsArticle[] = []
-  const query = tickers.slice(0, 5).join(" OR ")
-
-  try {
-    const response = await fetch(
-      `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=en&sortBy=publishedAt&pageSize=20`,
-      {
-        headers: {
-          "X-Api-Key": apiKey,
-        },
-      },
-    )
-
-    if (!response.ok) throw new Error(`HTTP ${response.status}`)
-
-    const data = await response.json()
-
-    for (const item of data.articles || []) {
-      articles.push({
-        title: item.title,
-        description: item.description,
-        url: item.url,
-        source: item.source.name,
-        imageUrl: item.urlToImage,
-        publishedAt: new Date(item.publishedAt),
-        tickers: extractTickers(item.title + " " + (item.description || "")),
-        sentiment: analyzeSentiment(item.title + " " + (item.description || "")),
-      })
-    }
-  } catch (error) {
-    console.error("[v0] NewsAPI error:", error)
-  }
-
-  return articles
-}
-
 // Extract tickers from text
 function extractTickers(text: string): string[] {
   const tickers: string[] = []

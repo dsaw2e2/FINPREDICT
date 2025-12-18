@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { parseRSSFeed, fetchYahooFinanceNews, fetchNewsAPI, type NewsArticle } from "@/lib/news-parsers"
+import { parseRSSFeed, fetchYahooFinanceNews, type NewsArticle } from "@/lib/news-parsers"
 
 export const runtime = "edge"
 export const revalidate = 300 // Cache for 5 minutes
@@ -21,7 +21,7 @@ export async function GET(request: Request) {
     const source = searchParams.get("source")
     const sentiment = searchParams.get("sentiment")
 
-    console.log("[v0] Fetching real news from RSS feeds and APIs...")
+    console.log("[v0] Fetching real news from RSS feeds and Yahoo Finance API...")
 
     const newsPromises: Promise<NewsArticle[]>[] = []
 
@@ -32,12 +32,6 @@ export async function GET(request: Request) {
 
     // Fetch from Yahoo Finance
     newsPromises.push(fetchYahooFinanceNews(POPULAR_TICKERS))
-
-    // Fetch from NewsAPI if key available
-    const newsApiKey = process.env.NEWS_API_KEY
-    if (newsApiKey) {
-      newsPromises.push(fetchNewsAPI(newsApiKey, POPULAR_TICKERS))
-    }
 
     const newsArrays = await Promise.all(newsPromises)
     const allArticles = newsArrays.flat()

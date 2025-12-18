@@ -294,28 +294,17 @@ const stockDatabase = [
   { ticker: "AAPL", name: "Apple Inc.", category: "US Tech" },
   { ticker: "GOOGL", name: "Alphabet Inc.", category: "US Tech" },
   { ticker: "MSFT", name: "Microsoft Corporation", category: "US Tech" },
-  { ticker: "TSLA", name: "Tesla Inc.", category: "US Tech" },
-  { ticker: "META", name: "Meta Platforms Inc.", category: "US Tech" },
+  { ticker: "TSLA", name: "Tesla, Inc.", category: "US Tech" },
+  { ticker: "META", name: "Meta Platforms, Inc.", category: "US Tech" },
   { ticker: "NVDA", name: "NVIDIA Corporation", category: "US Tech" },
-  { ticker: "AMZN", name: "Amazon.com Inc.", category: "US Tech" },
-  { ticker: "NFLX", name: "Netflix Inc.", category: "US Tech" },
 
   // US Finance
   { ticker: "JPM", name: "JPMorgan Chase & Co.", category: "US Finance" },
   { ticker: "V", name: "Visa Inc.", category: "US Finance" },
-  { ticker: "MA", name: "Mastercard Inc.", category: "US Finance" },
-  { ticker: "UNH", name: "UnitedHealth Group Inc.", category: "US Finance" },
+  { ticker: "MA", name: "Mastercard Incorporated", category: "US Finance" },
+  { ticker: "UNH", name: "UnitedHealth Group", category: "US Finance" },
   { ticker: "BAC", name: "Bank of America Corp.", category: "US Finance" },
-  { ticker: "WFC", name: "Wells Fargo & Co.", category: "US Finance" },
-
-  // Kazakhstan
-  { ticker: "KCEL", name: "Казахтелеком", category: "Казахстанские" },
-  { ticker: "KCMG", name: "Казахмыс", category: "Казахстанские" },
-  { ticker: "KZTK", name: "Казтрансойл", category: "Казахстанские" },
-  { ticker: "BTAS", name: "БТА Банк", category: "Казахстанские" },
-  { ticker: "RDGZ", name: "Разведка Добыча КазМунайГаз", category: "Казахстанские" },
-  { ticker: "KEGC", name: "KEGOC", category: "Казахстанские" },
-  { ticker: "HALYK", name: "Народный Банк Казахстана", category: "Казахстанские" },
+  { ticker: "WFC", name: "Wells Fargo & Company", category: "US Finance" },
 
   // European
   { ticker: "ASML.AS", name: "ASML Holding", category: "European" },
@@ -337,36 +326,35 @@ const stockDatabase = [
 const stockCategories = {
   "US Tech": ["AAPL", "GOOGL", "MSFT", "TSLA", "META", "NVDA"],
   "US Finance": ["JPM", "V", "MA", "UNH", "BAC", "WFC"],
-  Казахстанские: ["KCEL", "KCMG", "KZTK", "BTAS", "RDGZ", "KEGC"],
   European: ["ASML.AS", "SAP.DE", "NESN.SW", "NOVO-B.CO", "MC.PA", "OR.PA"],
   Азиатские: ["7203.T", "0700.HK", "005930.KS", "TSM", "BABA", "2330.TW"],
 }
 
 const mockStockData = {
-  AAPL: {
-    name: "Apple Inc.",
-    price: 185.92,
-    change: 2.34,
-    changePercent: 1.28,
-    prediction: { direction: "up", confidence: 78, target: 195.5, timeframe: "30 дней" },
-    technicals: { rsi: 65, macd: "Bullish", sma: "Above" },
-  },
-  GOOGL: {
-    name: "Alphabet Inc.",
-    price: 142.56,
-    change: -1.23,
-    changePercent: -0.85,
-    prediction: { direction: "up", confidence: 65, target: 150.0, timeframe: "45 дней" },
-    technicals: { rsi: 58, macd: "Neutral", sma: "Above" },
-  },
-  KCEL: {
-    name: "Казахтелеком",
-    price: 12500,
-    change: 150,
-    changePercent: 1.22,
-    prediction: { direction: "up", confidence: 72, target: 13200, timeframe: "60 дней" },
-    technicals: { rsi: 62, macd: "Bullish", sma: "Above" },
-  },
+  AAPL: { price: 150.0, change: -2.5, changePercent: -1.64, currency: "USD" },
+  GOOGL: { price: 142.5, change: 1.8, changePercent: 1.28, currency: "USD" },
+  MSFT: { price: 420.5, change: 5.2, changePercent: 1.25, currency: "USD" },
+  TSLA: { price: 248.4, change: -3.1, changePercent: -1.23, currency: "USD" },
+  META: { price: 520.3, change: 8.9, changePercent: 1.74, currency: "USD" },
+  NVDA: { price: 875.2, change: 15.6, changePercent: 1.81, currency: "USD" },
+  JPM: { price: 187.3, change: 2.1, changePercent: 1.13, currency: "USD" },
+  V: { price: 265.4, change: -1.2, changePercent: -0.45, currency: "USD" },
+  MA: { price: 448.7, change: 3.5, changePercent: 0.79, currency: "USD" },
+  UNH: { price: 512.9, change: 6.8, changePercent: 1.34, currency: "USD" },
+  BAC: { price: 38.5, change: -0.3, changePercent: -0.77, currency: "USD" },
+  WFC: { price: 52.7, change: 0.9, changePercent: 1.74, currency: "USD" },
+  "ASML.AS": { price: 785.4, change: 12.3, changePercent: 1.59, currency: "EUR" },
+  "SAP.DE": { price: 168.9, change: -2.1, changePercent: -1.23, currency: "EUR" },
+  "NESN.SW": { price: 92.3, change: 0.7, changePercent: 0.76, currency: "CHF" },
+  "NOVO-B.CO": { price: 580.2, change: 8.4, changePercent: 1.47, currency: "DKK" },
+  "MC.PA": { price: 725.6, change: -5.3, changePercent: -0.73, currency: "EUR" },
+  "OR.PA": { price: 442.8, change: 3.2, changePercent: 0.73, currency: "EUR" },
+  "7203.T": { price: 2450.0, change: -15.0, changePercent: -0.61, currency: "JPY" },
+  "0700.HK": { price: 385.6, change: 7.2, changePercent: 1.9, currency: "HKD" },
+  "005930.KS": { price: 71200.0, change: 500.0, changePercent: 0.71, currency: "KRW" },
+  TSM: { price: 168.5, change: 2.8, changePercent: 1.69, currency: "USD" },
+  BABA: { price: 85.3, change: -1.2, changePercent: -1.39, currency: "USD" },
+  "2330.TW": { price: 725.0, change: 8.0, changePercent: 1.12, currency: "TWD" },
 }
 
 interface Alert {
@@ -405,10 +393,6 @@ const marketActivity = [
   { ticker: "GOOGL", price: 142.56, change: -1.23, changePercent: -0.85, currency: "USD" },
   { ticker: "MSFT", price: 420.55, change: 5.67, changePercent: 1.37, currency: "USD" },
   { ticker: "TSLA", price: 248.42, change: -3.21, changePercent: -1.27, currency: "USD" },
-  { ticker: "KCEL", price: 12500, change: 150, changePercent: 1.22, currency: "KZT" },
-  { ticker: "KCMG", price: 8750, change: -200, changePercent: -2.23, currency: "KZT" },
-  { ticker: "KZTK", price: 15600, change: 300, changePercent: 1.96, currency: "KZT" },
-  { ticker: "BTAS", price: 4200, change: -50, changePercent: -1.17, currency: "KZT" },
   { ticker: "ASML.AS", price: 785.4, change: 12.3, changePercent: 1.59, currency: "USD" },
   { ticker: "SAP.DE", price: 198.75, change: -2.45, changePercent: -1.22, currency: "USD" },
   { ticker: "NESN.SW", price: 108.2, change: 0.8, changePercent: 0.74, currency: "USD" },
@@ -1134,19 +1118,21 @@ export default function Home() {
     } catch (error) {
       console.error("[v0] Error fetching stock data:", error) // Added debug log for errors
       // Return fallback data
-      const isKazakh = ["KCEL", "KCMG", "KZTK", "BTAS", "HALYK"].includes(ticker.toUpperCase())
+      const isEuropean = ["ASML.AS", "SAP.DE", "NESN.SW", "NOVO-B.CO", "MC.PA", "OR.PA"].includes(ticker.toUpperCase())
+      const isAsian = ["7203.T", "0700.HK", "005930.KS", "TSM", "BABA", "2330.TW"].includes(ticker.toUpperCase())
+
       return {
         ticker: ticker, // Ensure ticker is present in fallback
-        price: isKazakh ? 22500 : 150,
-        change: isKazakh ? 450 : 2.5,
+        price: isEuropean ? 200 : isAsian ? 5000 : 150,
+        change: isEuropean ? 3.5 : isAsian ? -50 : 2.5,
         changePercent: 2.1,
         volume: 1500000,
-        marketCap: isKazakh ? 450000000000 : 2500000000000,
+        marketCap: isEuropean ? 100000000000 : isAsian ? 300000000000 : 2500000000000,
         peRatio: 15.2,
-        week52Low: isKazakh ? 18000 : 120,
-        week52High: isKazakh ? 27000 : 180,
-        name: isKazakh ? `${ticker} АО` : `${ticker} Corporation`,
-        currency: isKazakh ? "KZT" : "USD", // Ensure fallback data has correct currency
+        week52Low: isEuropean ? 150 : isAsian ? 4000 : 120,
+        week52High: isEuropean ? 250 : isAsian ? 6000 : 180,
+        name: isEuropean ? `${ticker} Corp.` : isAsian ? `${ticker} Co.` : `${ticker} Corporation`,
+        currency: isEuropean ? "EUR" : isAsian ? "JPY" : "USD", // Ensure fallback data has correct currency
         historicalPrices: [], // Add for deterministic calculations
         avgVolume: 1000000, // Add for deterministic calculations
       }
@@ -1669,7 +1655,8 @@ ${new Date().toLocaleString("ru-RU")}
   const fetchMarketData = async () => {
     setMarketDataLoading(true)
     try {
-      const allTickers = Object.values(popularStocks).flat()
+      // Fetching data from /api/investing endpoint with tickers from popularStocks
+      const allTickers = stockDatabase.map((stock) => stock.ticker) // Use all available tickers from stockDatabase
       const response = await fetch(`/api/investing?tickers=${allTickers.join(",")}`)
 
       if (response.ok) {
@@ -1680,26 +1667,30 @@ ${new Date().toLocaleString("ru-RU")}
       }
     } catch (error) {
       console.error("Error fetching market data:", error)
-      // Fallback to existing mock data generation
+      // Fallback to mock data generation if API fails
       const marketData = []
-      const allTickers = Object.values(popularStocks).flat()
+      const allTickers = stockDatabase.map((stock) => stock.ticker)
 
       for (const ticker of allTickers) {
+        const stockInfo = stockDatabase.find((s) => s.ticker === ticker)
         const realisticPrices = {
-          AAPL: 185.92,
-          GOOGL: 142.56,
-          MSFT: 420.55,
-          TSLA: 248.42,
-          KCEL: 2500, // Example prices in KZT
-          KCMG: 1800,
-          KZTK: 3200,
-          BTAS: 850,
+          AAPL: 150.0,
+          GOOGL: 142.5,
+          MSFT: 420.5,
+          TSLA: 248.4,
+          "ASML.AS": 785.4,
+          "SAP.DE": 168.9,
+          "NESN.SW": 92.3,
+          "7203.T": 2450.0,
+          "0700.HK": 385.6,
+          "005930.KS": 71200.0,
         }
 
         const basePrice = realisticPrices[ticker as keyof typeof realisticPrices] || Math.random() * 200 + 50
         const change = (Math.random() - 0.5) * basePrice * 0.03
         const changePercent = (change / basePrice) * 100
-        const currency = ["KCEL", "KCMG", "KZTK", "BTAS"].includes(ticker) ? "KZT" : "USD"
+        const currency =
+          stockInfo?.category === "European" ? "EUR" : stockInfo?.category === "Азиатские" ? "JPY" : "USD"
 
         marketData.push({
           ticker,
@@ -1716,10 +1707,12 @@ ${new Date().toLocaleString("ru-RU")}
     }
   }
 
+  // Updated popularStocks structure to match the new `stockDatabase` structure
   const popularStocks = {
-    "US Tech": ["AAPL", "GOOGL", "MSFT"],
-    Kazakhstan: ["KCEL", "KCMG", "KZTK"],
+    "US Tech": ["AAPL", "GOOGL", "MSFT", "TSLA"],
+    "US Finance": ["JPM", "V", "MA", "UNH"],
     Europe: ["ASML.AS", "SAP.DE", "NESN.SW"],
+    Asia: ["7203.T", "0700.HK", "005930.KS"],
   }
 
   const viewArticle = (news: any) => {
@@ -2095,17 +2088,17 @@ ${new Date().toLocaleString("ru-RU")}
                         </div>
                       </div>
 
-                      {/* Казахстанские */}
+                      {/* European */}
                       <div
                         className={`p-6 rounded-xl border ${
                           isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"
                         } shadow-sm`}
                       >
                         <h4 className={`font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                          Казахстанские
+                          European
                         </h4>
                         <div className="space-y-3">
-                          {["KCEL", "KCMG", "KZTK", "BTAS"].map((ticker) => (
+                          {["ASML.AS", "SAP.DE", "NESN.SW", "NOVO-B.CO"].map((ticker) => (
                             <button
                               key={ticker}
                               onClick={() => handleStockSelect(ticker)}

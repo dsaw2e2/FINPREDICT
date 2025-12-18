@@ -1,12 +1,6 @@
 import { NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase/server"
-import {
-  parseRSSFeed,
-  fetchYahooFinanceNews,
-  fetchNewsAPI,
-  generateContentHash,
-  type NewsArticle,
-} from "@/lib/news-parsers"
+import { parseRSSFeed, fetchYahooFinanceNews, generateContentHash, type NewsArticle } from "@/lib/news-parsers"
 
 export const runtime = "edge"
 export const revalidate = 0
@@ -50,14 +44,6 @@ export async function GET(request: Request) {
     console.log("[v0] Fetching from Yahoo Finance...")
     const yahooArticles = await fetchYahooFinanceNews(trackedTickers)
     allArticles.push(...yahooArticles)
-
-    // Fetch from NewsAPI if API key is available
-    const newsApiKey = process.env.NEWS_API_KEY
-    if (newsApiKey) {
-      console.log("[v0] Fetching from NewsAPI...")
-      const newsApiArticles = await fetchNewsAPI(newsApiKey, trackedTickers)
-      allArticles.push(...newsApiArticles)
-    }
 
     console.log(`[v0] Total articles fetched: ${allArticles.length}`)
 
