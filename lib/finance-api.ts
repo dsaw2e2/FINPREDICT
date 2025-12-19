@@ -25,7 +25,7 @@ const EUROPEAN_ENERGY_COMPANIES = [
   { ticker: "FORTUM.HE", name: "Fortum Oyj", country: "Finland", sector: "Utilities", exchange: "Helsinki" },
 ]
 
-const REQUEST_DELAY = 200 // 200ms delay between requests
+const REQUEST_DELAY = 600 // 600ms delay between requests to avoid rate limits
 const MAX_RETRIES = 3
 const CACHE_TTL = 300000 // 5 minutes in milliseconds
 
@@ -53,7 +53,7 @@ async function rateLimitedFetch(url: string, retries = 0): Promise<Response> {
     })
 
     if (response.status === 429 && retries < MAX_RETRIES) {
-      const backoffTime = Math.pow(2, retries) * 1000 // Exponential backoff: 1s, 2s, 4s
+      const backoffTime = Math.pow(2, retries + 2) * 1000 // Exponential backoff: 4s, 8s, 16s
       console.log(`[v0] Rate limited, retrying in ${backoffTime}ms (attempt ${retries + 1}/${MAX_RETRIES})`)
       await new Promise((resolve) => setTimeout(resolve, backoffTime))
       return rateLimitedFetch(url, retries + 1)
@@ -62,7 +62,7 @@ async function rateLimitedFetch(url: string, retries = 0): Promise<Response> {
     return response
   } catch (error) {
     if (retries < MAX_RETRIES) {
-      const backoffTime = Math.pow(2, retries) * 1000
+      const backoffTime = Math.pow(2, retries + 1) * 1000 // 2s, 4s, 8s
       console.log(`[v0] Request failed, retrying in ${backoffTime}ms`)
       await new Promise((resolve) => setTimeout(resolve, backoffTime))
       return rateLimitedFetch(url, retries + 1)

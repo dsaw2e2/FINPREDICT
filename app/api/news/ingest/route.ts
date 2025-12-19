@@ -11,12 +11,19 @@ export async function GET(request: Request) {
 
     const supabase = createServerClient()
 
-    // Fetch active sources
     const { data: sources, error: sourcesError } = await supabase.from("news_sources").select("*").eq("is_active", true)
+
+    if (sourcesError && sourcesError.message.includes("does not exist")) {
+      console.log("[v0] News tables not created yet. Please run scripts/create_news_tables.sql")
+      return NextResponse.json({
+        success: false,
+        error: "Database tables not initialized. Run scripts/create_news_tables.sql in your Supabase project.",
+        setup_required: true,
+      })
+    }
 
     if (sourcesError) throw sourcesError
 
-    // Fetch tracked tickers
     const { data: tickers, error: tickersError } = await supabase
       .from("tracked_tickers")
       .select("ticker")
@@ -35,19 +42,16 @@ export async function GET(request: Request) {
         const articles = await parseRSSFeed(source.feed_url, source.name)
         allArticles.push(...articles)
 
-        // Update last_fetched_at
         await supabase.from("news_sources").update({ last_fetched_at: new Date().toISOString() }).eq("id", source.id)
       }
     }
 
-    // Fetch from Yahoo Finance
     console.log("[v0] Fetching from Yahoo Finance...")
     const yahooArticles = await fetchYahooFinanceNews(trackedTickers)
     allArticles.push(...yahooArticles)
 
     console.log(`[v0] Total articles fetched: ${allArticles.length}`)
 
-    // Remove duplicates and prepare for insertion
     const uniqueArticles = allArticles.filter((article, index, self) => {
       const hash = generateContentHash(article)
       return index === self.findIndex((a) => generateContentHash(a) === hash)
@@ -55,7 +59,6 @@ export async function GET(request: Request) {
 
     console.log(`[v0] Unique articles after deduplication: ${uniqueArticles.length}`)
 
-    // Insert into database (ignore conflicts)
     let insertedCount = 0
     for (const article of uniqueArticles) {
       const { error } = await supabase

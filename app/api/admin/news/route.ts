@@ -3,12 +3,10 @@ import { createServerClient } from "@/lib/supabase/server"
 
 export const runtime = "edge"
 
-// POST - Create new news article manually
 export async function POST(request: Request) {
   try {
     const supabase = createServerClient()
 
-    // Check if user is authenticated
     const {
       data: { user },
       error: authError,
@@ -30,6 +28,14 @@ export async function POST(request: Request) {
       .select()
       .single()
 
+    if (error && error.message.includes("does not exist")) {
+      return NextResponse.json({
+        success: false,
+        error: "Database tables not initialized. Run scripts/create_news_tables.sql in your Supabase project.",
+        setup_required: true,
+      })
+    }
+
     if (error) throw error
 
     return NextResponse.json({ success: true, article: data })
@@ -42,7 +48,6 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT - Update existing news article
 export async function PUT(request: Request) {
   try {
     const supabase = createServerClient()
@@ -69,6 +74,14 @@ export async function PUT(request: Request) {
       .select()
       .single()
 
+    if (error && error.message.includes("does not exist")) {
+      return NextResponse.json({
+        success: false,
+        error: "Database tables not initialized.",
+        setup_required: true,
+      })
+    }
+
     if (error) throw error
 
     return NextResponse.json({ success: true, article: data })
@@ -81,7 +94,6 @@ export async function PUT(request: Request) {
   }
 }
 
-// DELETE - Delete news article
 export async function DELETE(request: Request) {
   try {
     const supabase = createServerClient()
@@ -103,6 +115,14 @@ export async function DELETE(request: Request) {
     }
 
     const { error } = await supabase.from("news_articles").delete().eq("id", id)
+
+    if (error && error.message.includes("does not exist")) {
+      return NextResponse.json({
+        success: false,
+        error: "Database tables not initialized.",
+        setup_required: true,
+      })
+    }
 
     if (error) throw error
 
