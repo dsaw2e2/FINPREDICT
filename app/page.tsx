@@ -1709,10 +1709,10 @@ ${new Date().toLocaleString("ru-RU")}
 
   // Updated popularStocks structure to match the new `stockDatabase` structure
   const popularStocks = {
-    "US Tech": ["AAPL", "GOOGL", "MSFT", "TSLA"],
-    "US Finance": ["JPM", "V", "MA", "UNH"],
-    Europe: ["ASML.AS", "SAP.DE", "NESN.SW"],
-    Asia: ["7203.T", "0700.HK", "005930.KS"],
+    "US Tech": ["AAPL", "GOOGL", "MSFT", "NVDA"],
+    "US Finance": ["JPM", "V"],
+    Europe: ["ASML.AS", "SAP.DE"],
+    Asia: ["TSM"],
   }
 
   const viewArticle = (news: any) => {
@@ -2046,7 +2046,7 @@ ${new Date().toLocaleString("ru-RU")}
                       >
                         <h4 className={`font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>US Tech</h4>
                         <div className="space-y-3">
-                          {["AAPL", "GOOGL", "MSFT", "TSLA"].map((ticker) => (
+                          {popularStocks["US Tech"].map((ticker) => (
                             <button
                               key={ticker}
                               onClick={() => handleStockSelect(ticker)}
@@ -2072,7 +2072,7 @@ ${new Date().toLocaleString("ru-RU")}
                           US Finance
                         </h4>
                         <div className="space-y-3">
-                          {["JPM", "V", "MA", "UNH"].map((ticker) => (
+                          {popularStocks["US Finance"].map((ticker) => (
                             <button
                               key={ticker}
                               onClick={() => handleStockSelect(ticker)}
@@ -2098,7 +2098,7 @@ ${new Date().toLocaleString("ru-RU")}
                           European
                         </h4>
                         <div className="space-y-3">
-                          {["ASML.AS", "SAP.DE", "NESN.SW", "NOVO-B.CO"].map((ticker) => (
+                          {popularStocks["Europe"].map((ticker) => (
                             <button
                               key={ticker}
                               onClick={() => handleStockSelect(ticker)}
