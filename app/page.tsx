@@ -656,6 +656,13 @@ const translations = {
     createdBy: "Создано",
     switchTheme: "Переключить тему",
     selectLanguage: "Выберите язык",
+    
+    // Theme customization
+    themeSettings: "Настройки темы",
+    colorTheme: "Цветовая тема",
+    selectColor: "Выберите основной цвет",
+    applyTheme: "Применить",
+    resetTheme: "Сбросить",
 
     kztUsdForecast: "Прогноз курса доллара к тенге",
     kztForecastDescription: "7-дневный прогноз курса USD/KZT с использованием модели Prophet",
@@ -778,6 +785,13 @@ const translations = {
     createdBy: "Created by",
     switchTheme: "Switch theme",
     selectLanguage: "Select language",
+    
+    // Theme customization
+    themeSettings: "Theme Settings",
+    colorTheme: "Color Theme",
+    selectColor: "Select primary color",
+    applyTheme: "Apply",
+    resetTheme: "Reset",
 
     kztUsdForecast: "USD/KZT Exchange Rate Forecast",
     kztForecastDescription: "7-day USD/KZT forecast using Prophet model",
@@ -901,6 +915,13 @@ const translations = {
     createdBy: "Жасаған",
     switchTheme: "Тақырыпты ауыстыру",
     selectLanguage: "Тілді таңдау",
+    
+    // Theme customization
+    themeSettings: "Тақырып параметрлері",
+    colorTheme: "Түс тақырыбы",
+    selectColor: "Негізгі түсті таңдаңыз",
+    applyTheme: "Қолдану",
+    resetTheme: "Қалпына келтіру",
 
     kztUsdForecast: "USD/KZT Бағамы Болжамы", // Adjusted for clarity
     kztForecastDescription: "Prophet үлгісін қолданып 7-күндік USD/KZT болжамы", // Adjusted
@@ -960,6 +981,8 @@ export default function Home() {
   const [language, setLanguage] = useState<Language>("ru")
   const [forceUpdate, setForceUpdate] = useState(0)
   const [isDarkMode, setIsDarkMode] = useState(false)
+  const [showThemePanel, setShowThemePanel] = useState(false)
+  const [selectedThemeHue, setSelectedThemeHue] = useState(264) // Default purple
 
   const t = (key: string) => translations[language][key as keyof (typeof translations)[typeof language]] || key
 
@@ -1931,6 +1954,154 @@ ${new Date().toLocaleString("ru-RU")}
                 >
                   {isDarkMode ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
                 </button>
+
+                {/* Color Theme Button */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowThemePanel(!showThemePanel)}
+                    className={`p-3 rounded-xl transition-all duration-300 modern-button ${
+                      isDarkMode
+                        ? "bg-gray-800/50 hover:bg-gray-700/50"
+                        : "bg-white/50 hover:bg-gray-100"
+                    }`}
+                    title={t("colorTheme")}
+                  >
+                    <div 
+                      className="w-5 h-5 rounded-full border-2 border-white shadow-inner"
+                      style={{ 
+                        background: `linear-gradient(135deg, 
+                          oklch(0.6 0.2 ${selectedThemeHue}) 0%, 
+                          oklch(0.4 0.2 ${selectedThemeHue}) 100%)` 
+                      }}
+                    />
+                  </button>
+                  
+                  {/* Theme Panel Dropdown */}
+                  {showThemePanel && (
+                    <div 
+                      className={`absolute right-0 top-full mt-2 p-4 rounded-xl shadow-2xl border z-50 w-72 ${
+                        isDarkMode 
+                          ? "bg-gray-900 border-gray-700" 
+                          : "bg-white border-gray-200"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className={`font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                          {t("colorTheme")}
+                        </h3>
+                        <button 
+                          onClick={() => setShowThemePanel(false)}
+                          className={`p-1 rounded-lg transition-colors ${
+                            isDarkMode ? "hover:bg-gray-800 text-gray-400" : "hover:bg-gray-100 text-gray-500"
+                          }`}
+                        >
+                          <X />
+                        </button>
+                      </div>
+                      
+                      <p className={`text-sm mb-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                        {t("selectColor")}
+                      </p>
+                      
+                      {/* Color Presets Grid */}
+                      <div className="grid grid-cols-4 gap-2 mb-4">
+                        {[
+                          { name: "Purple", hue: 264, color: "from-purple-500 to-purple-700" },
+                          { name: "Blue", hue: 220, color: "from-blue-500 to-blue-700" },
+                          { name: "Teal", hue: 175, color: "from-teal-500 to-teal-700" },
+                          { name: "Green", hue: 145, color: "from-green-500 to-green-700" },
+                          { name: "Orange", hue: 30, color: "from-orange-500 to-orange-700" },
+                          { name: "Rose", hue: 350, color: "from-rose-500 to-rose-700" },
+                          { name: "Amber", hue: 45, color: "from-amber-500 to-amber-700" },
+                          { name: "Cyan", hue: 190, color: "from-cyan-500 to-cyan-700" },
+                        ].map((theme) => (
+                          <button
+                            key={theme.name}
+                            onClick={() => {
+                              setSelectedThemeHue(theme.hue)
+                              // Apply theme to CSS variables
+                              document.documentElement.style.setProperty(
+                                "--primary", 
+                                `oklch(${isDarkMode ? 0.65 : 0.45} 0.22 ${theme.hue})`
+                              )
+                              document.documentElement.style.setProperty(
+                                "--ring", 
+                                `oklch(${isDarkMode ? 0.65 : 0.45} 0.22 ${theme.hue})`
+                              )
+                              document.documentElement.style.setProperty(
+                                "--accent", 
+                                `oklch(${isDarkMode ? 0.65 : 0.45} 0.22 ${theme.hue})`
+                              )
+                            }}
+                            className={`w-12 h-12 rounded-xl bg-gradient-to-br ${theme.color} transition-all duration-200 hover:scale-110 ${
+                              selectedThemeHue === theme.hue 
+                                ? "ring-2 ring-offset-2 ring-blue-500 scale-110" 
+                                : ""
+                            }`}
+                            style={{
+                              background: `linear-gradient(135deg, 
+                                oklch(0.6 0.2 ${theme.hue}) 0%, 
+                                oklch(0.4 0.2 ${theme.hue}) 100%)`
+                            }}
+                            title={theme.name}
+                          />
+                        ))}
+                      </div>
+                      
+                      {/* Custom Hue Slider */}
+                      <div className="mb-4">
+                        <label className={`text-xs font-medium mb-2 block ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                          Custom Color (Hue: {selectedThemeHue})
+                        </label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="360"
+                          value={selectedThemeHue}
+                          onChange={(e) => {
+                            const hue = parseInt(e.target.value)
+                            setSelectedThemeHue(hue)
+                            document.documentElement.style.setProperty(
+                              "--primary", 
+                              `oklch(${isDarkMode ? 0.65 : 0.45} 0.22 ${hue})`
+                            )
+                            document.documentElement.style.setProperty(
+                              "--ring", 
+                              `oklch(${isDarkMode ? 0.65 : 0.45} 0.22 ${hue})`
+                            )
+                            document.documentElement.style.setProperty(
+                              "--accent", 
+                              `oklch(${isDarkMode ? 0.65 : 0.45} 0.22 ${hue})`
+                            )
+                          }}
+                          className="w-full h-3 rounded-lg appearance-none cursor-pointer"
+                          style={{
+                            background: `linear-gradient(to right, 
+                              oklch(0.6 0.2 0), oklch(0.6 0.2 60), oklch(0.6 0.2 120), 
+                              oklch(0.6 0.2 180), oklch(0.6 0.2 240), oklch(0.6 0.2 300), oklch(0.6 0.2 360))`
+                          }}
+                        />
+                      </div>
+                      
+                      {/* Reset Button */}
+                      <button
+                        onClick={() => {
+                          setSelectedThemeHue(264)
+                          document.documentElement.style.setProperty("--primary", "oklch(0.45 0.22 264)")
+                          document.documentElement.style.setProperty("--ring", "oklch(0.45 0.22 264)")
+                          document.documentElement.style.setProperty("--accent", "oklch(0.45 0.22 264)")
+                        }}
+                        className={`w-full py-2 rounded-lg text-sm font-medium transition-colors ${
+                          isDarkMode 
+                            ? "bg-gray-800 text-gray-300 hover:bg-gray-700" 
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        }`}
+                      >
+                        {t("resetTheme")}
+                      </button>
+                    </div>
+                  )}
+                </div>
 
                 {/* Contact Sales Button */}
                 <button
