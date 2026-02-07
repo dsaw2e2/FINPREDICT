@@ -13,6 +13,15 @@ const google = createGoogleGenerativeAI({
 export const maxDuration = 30
 
 export async function POST(req: Request) {
+  const keyVal = process.env.GOOGLE_GENERATIVE_AI_API_KEY
+  const geminiKey = process.env.GEMINI_API_KEY
+  console.log("[v0] GOOGLE_GENERATIVE_AI_API_KEY exists:", !!keyVal, "length:", keyVal?.length ?? 0)
+  console.log("[v0] GEMINI_API_KEY exists:", !!geminiKey, "length:", geminiKey?.length ?? 0)
+  
+  // List all env vars that contain GEMINI or GOOGLE
+  const relevantKeys = Object.keys(process.env).filter(k => k.includes("GEMINI") || k.includes("GOOGLE"))
+  console.log("[v0] Relevant env var keys:", relevantKeys)
+
   const { messages }: { messages: UIMessage[] } = await req.json()
 
   const result = streamText({
