@@ -6,27 +6,9 @@ import {
 } from "ai"
 import { createGoogleGenerativeAI } from "@ai-sdk/google"
 
-const google = createGoogleGenerativeAI({
-  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
-})
-
 export const maxDuration = 30
 
-export async function POST(req: Request) {
-  const keyVal = process.env.GOOGLE_GENERATIVE_AI_API_KEY
-  const geminiKey = process.env.GEMINI_API_KEY
-  console.log("[v0] GOOGLE_GENERATIVE_AI_API_KEY exists:", !!keyVal, "length:", keyVal?.length ?? 0)
-  console.log("[v0] GEMINI_API_KEY exists:", !!geminiKey, "length:", geminiKey?.length ?? 0)
-  
-  // List all env vars that contain GEMINI or GOOGLE
-  const relevantKeys = Object.keys(process.env).filter(k => k.includes("GEMINI") || k.includes("GOOGLE"))
-  console.log("[v0] Relevant env var keys:", relevantKeys)
-
-  const { messages }: { messages: UIMessage[] } = await req.json()
-
-  const result = streamText({
-    model: google("gemini-2.0-flash"),
-    system: `You are FinPredict AI Assistant — an expert financial analyst and stock market advisor.
+const SYSTEM_PROMPT = `You are FinPredict AI Assistant — an expert financial analyst and stock market advisor.
 
 Your capabilities:
 - Analyze stock prices and provide insights on energy companies (Saudi Aramco, ExxonMobil, Shell, BP, TotalEnergies, Chevron, ConocoPhillips, Equinor, Enel, Iberdrola, E.ON, RWE, Orsted, Vestas, Siemens Energy, Neste)
@@ -42,13 +24,41 @@ Rules:
 - Be concise but thorough. Use bullet points for clarity
 - When discussing predictions, explain the methodology and confidence levels
 - Reference real market data and factors when possible
-- If asked about a specific ticker, provide company background, recent performance context, and key factors to watch`,
-    messages: await convertToModelMessages(messages),
-    abortSignal: req.signal,
-  })
+- If asked about a specific ticker, provide company background, recent performance context, and key factors to watch`
 
-  return result.toUIMessageStreamResponse({
-    originalMessages: messages,
-    consumeSseStream: consumeStream,
-  })
+export async function POST(req: Request) {
+  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY
+  console.log("[v0] API key first 5 chars:", apiKey?.substring(0, 5), "length:", apiKey?.length)
+
+  if (!apiKey || apiKey.length < 10) {
+    return Response.json(
+      { error: "GOOGLE_GENERATIVE_AI_API_KEY is not configured. Please add a valid Gemini API key." },
+      { status: 500 }
+    )
+  }
+
+  const google = createGoogleGenerativeAI({ apiKey })
+
+  try {
+    const { messages }: { messages: UIMessage[] } = await req.json()
+
+    const result = streamText({
+      model: google("gemini-2.0-flash"),
+      system: SYSTEM_PROMPT,
+      messages: await convertToModelMessages(messages),
+      abortSignal: req.signal,
+    })
+
+    return result.toUIMessageStreamResponse({
+      originalMessages: messages,
+      consumeSseStream: consumeStream,
+    })
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : "Unknown error"
+    console.log("[v0] AI Chat error:", errMsg)
+    return Response.json(
+      { error: `AI request failed: ${errMsg}` },
+      { status: 500 }
+    )
+  }
 }
