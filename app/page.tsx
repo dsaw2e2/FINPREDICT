@@ -15,6 +15,7 @@ import {
 } from "recharts"
 import React from "react" // Import React for using JSX in the new component
 import type { CompanyInfo } from "@/lib/energy-companies-info" // Import energy companies info
+import AIChat from "@/components/ai-chat"
 
 const BarChart3 = () => (
   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -664,6 +665,14 @@ const translations = {
     applyTheme: "Применить",
     resetTheme: "Сбросить",
 
+    // AI Chat
+    aiAssistant: "FinPredict AI",
+    askAboutStocks: "Спросите о ценах акций, прогнозах и анализе энергетических компаний",
+    sendMessage: "Введите сообщение...",
+    thinking: "Думаю...",
+    poweredBy: "Gemini AI",
+    disclaimer: "Не является финансовой рекомендацией",
+
     kztUsdForecast: "Прогноз курса доллара к тенге",
     kztForecastDescription: "7-дневный прогноз курса USD/KZT с использованием модели Prophet",
     currentRate: "Текущий курс",
@@ -792,6 +801,14 @@ const translations = {
     selectColor: "Select primary color",
     applyTheme: "Apply",
     resetTheme: "Reset",
+
+    // AI Chat
+    aiAssistant: "FinPredict AI",
+    askAboutStocks: "Ask about stock prices, forecasts, and energy company analysis",
+    sendMessage: "Type a message...",
+    thinking: "Thinking...",
+    poweredBy: "Gemini AI",
+    disclaimer: "Not financial advice",
 
     kztUsdForecast: "USD/KZT Exchange Rate Forecast",
     kztForecastDescription: "7-day USD/KZT forecast using Prophet model",
@@ -922,6 +939,14 @@ const translations = {
     selectColor: "Негізгі түсті таңдаңыз",
     applyTheme: "Қолдану",
     resetTheme: "Қалпына келтіру",
+
+    // AI Chat
+    aiAssistant: "FinPredict AI",
+    askAboutStocks: "Акция бағалары, болжамдар және энергетикалық компаниялар туралы сұраңыз",
+    sendMessage: "Хабарлама жазыңыз...",
+    thinking: "Ойланып жатырмын...",
+    poweredBy: "Gemini AI",
+    disclaimer: "Қаржылық кеңес емес",
 
     kztUsdForecast: "USD/KZT Бағамы Болжамы", // Adjusted for clarity
     kztForecastDescription: "Prophet үлгісін қолданып 7-күндік USD/KZT болжамы", // Adjusted
@@ -3534,6 +3559,19 @@ ${new Date().toLocaleString("ru-RU")}
           </div>
         </div>
       )}
+
+      {/* AI Chat Assistant */}
+      <AIChat
+        isDarkMode={isDarkMode}
+        translations={{
+          aiAssistant: t("aiAssistant"),
+          askAboutStocks: t("askAboutStocks"),
+          sendMessage: t("sendMessage"),
+          thinking: t("thinking"),
+          poweredBy: t("poweredBy"),
+          disclaimer: t("disclaimer"),
+        }}
+      />
     </div>
   )
 }
