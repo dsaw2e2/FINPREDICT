@@ -9,6 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@ai-sdk/google": "3.0.22",
     "@ai-sdk/react": "3.0.79",
     "@google/generative-ai": "^0.21.0",
     "@hookform/resolvers": "^3.10.0",

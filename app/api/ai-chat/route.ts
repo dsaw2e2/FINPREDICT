@@ -4,6 +4,11 @@ import {
   streamText,
   UIMessage,
 } from "ai"
+import { createGoogleGenerativeAI } from "@ai-sdk/google"
+
+const google = createGoogleGenerativeAI({
+  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+})
 
 export const maxDuration = 30
 
@@ -11,7 +16,7 @@ export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json()
 
   const result = streamText({
-    model: "google/gemini-2.5-flash",
+    model: google("gemini-2.5-flash"),
     system: `You are FinPredict AI Assistant — an expert financial analyst and stock market advisor.
 
 Your capabilities:
