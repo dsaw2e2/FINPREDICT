@@ -1,11 +1,11 @@
 import {
-  consumeStream,
   convertToModelMessages,
   streamText,
   UIMessage,
 } from "ai"
 import { createGoogleGenerativeAI } from "@ai-sdk/google"
 
+// Увеличиваем время ожидания для обработки сложных финансовых запросов
 export const maxDuration = 30
 
 const SYSTEM_PROMPT = `You are FinPredict AI Assistant — an expert financial analyst and stock market advisor.
@@ -27,12 +27,13 @@ Rules:
 - If asked about a specific ticker, provide company background, recent performance context, and key factors to watch`
 
 export async function POST(req: Request) {
+  // Получаем API-ключ из переменных окружения
   const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY
-  console.log("[v0] API key first 5 chars:", apiKey?.substring(0, 5), "length:", apiKey?.length)
 
+  // Проверка наличия ключа
   if (!apiKey || apiKey.length < 10) {
     return Response.json(
-      { error: "GOOGLE_GENERATIVE_AI_API_KEY is not configured. Please add a valid Gemini API key." },
+      { error: "GOOGLE_GENERATIVE_AI_API_KEY is not configured. Please add a valid Gemini API key to your environment variables." },
       { status: 500 }
     )
   }
@@ -42,20 +43,25 @@ export async function POST(req: Request) {
   try {
     const { messages }: { messages: UIMessage[] } = await req.json()
 
-    const result = streamText({
-      model: google("gemini-2.0-flash"),
+    // Проверка наличия истории сообщений
+    if (!messages || messages.length === 0) {
+      return Response.json({ error: "No messages provided" }, { status: 400 })
+    }
+
+    // Инициализация генерации текста
+    const result = await streamText({
+      model: google("gemini-2.0-flash"), // Используем модель Flash 2.0 для быстрой генерации
       system: SYSTEM_PROMPT,
-      messages: await convertToModelMessages(messages),
+      messages: convertToModelMessages(messages),
       abortSignal: req.signal,
     })
 
-    return result.toUIMessageStreamResponse({
-      originalMessages: messages,
-      consumeSseStream: consumeStream,
-    })
+    // Возвращаем поток в формате, который понимает useChat на фронтенде
+    return result.toDataStreamResponse()
   } catch (error: unknown) {
     const errMsg = error instanceof Error ? error.message : "Unknown error"
-    console.log("[v0] AI Chat error:", errMsg)
+    console.error("[FinPredict AI] Chat error:", errMsg)
+    
     return Response.json(
       { error: `AI request failed: ${errMsg}` },
       { status: 500 }

@@ -6,7 +6,7 @@
 
 The application uses Vercel Cron Jobs to automatically fetch news every 30 minutes:
 
-```json
+\`\`\`json
 {
   "crons": [
     {
@@ -15,13 +15,13 @@ The application uses Vercel Cron Jobs to automatically fetch news every 30 minut
     }
   ]
 }
-```
+\`\`\`
 
 ### Environment Variables
 
 Required environment variables:
 
-```bash
+\`\`\`bash
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
@@ -32,7 +32,7 @@ NEWS_API_KEY=your_newsapi_key
 
 # Optional: Alpha Vantage (for price data)
 ALPHA_VANTAGE_API_KEY=your_alpha_vantage_key
-```
+\`\`\`
 
 ### Caching Strategy
 
@@ -62,7 +62,7 @@ To prevent abuse and stay within API limits:
 ### Deployment Steps
 
 1. **Initial Setup**:
-   ```bash
+   \`\`\`bash
    # Clone repository
    git clone https://github.com/your-repo/finpredict.git
    cd finpredict
@@ -73,18 +73,18 @@ To prevent abuse and stay within API limits:
    # Set up environment variables
    cp .env.example .env.local
    # Edit .env.local with your keys
-   ```
+   \`\`\`
 
 2. **Database Setup**:
-   ```bash
+   \`\`\`bash
    # Run SQL scripts in Supabase dashboard or via CLI
    psql $DATABASE_URL -f scripts/create_news_tables.sql
-   ```
+   \`\`\`
 
 3. **Deploy to Vercel**:
-   ```bash
+   \`\`\`bash
    vercel --prod
-   ```
+   \`\`\`
 
 4. **Verify Cron Jobs**:
    - Go to Vercel Dashboard > Your Project > Settings > Cron Jobs
@@ -92,9 +92,9 @@ To prevent abuse and stay within API limits:
    - Check logs to ensure it's running successfully
 
 5. **Test Manual Ingestion**:
-   ```bash
+   \`\`\`bash
    curl https://your-domain.vercel.app/api/news/ingest
-   ```
+   \`\`\`
 
 ### Monitoring
 
