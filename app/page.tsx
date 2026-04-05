@@ -1712,7 +1712,7 @@ ${new Date().toLocaleString("ru-RU")}
 
       if (response.ok) {
         const result = await response.json()
-        setRealMarketData(result.data)
+        setRealMarketData(result.data || [])
       } else {
         throw new Error("Failed to fetch from Investing.com API")
       }
@@ -1781,10 +1781,10 @@ ${new Date().toLocaleString("ru-RU")}
       const response = await fetch("/api/news/list?page=1&limit=20")
       const data = await response.json()
 
-      if (data.success) {
-        setNewsData(data.articles)
+      if (data.success && data.articles) {
+        setNewsData(data.articles || [])
         setNewsPage(1)
-        setHasMoreNews(data.pagination.page < data.pagination.total_pages)
+        setHasMoreNews(data.pagination?.page < data.pagination?.total_pages)
         setLastNewsUpdate(Date.now())
       }
     } catch (error) {
@@ -1803,10 +1803,10 @@ ${new Date().toLocaleString("ru-RU")}
       const response = await fetch(`/api/news/list?page=${nextPage}&limit=20`)
       const data = await response.json()
 
-      if (data.success) {
-        setNewsData([...newsData, ...data.articles])
+      if (data.success && data.articles) {
+        setNewsData([...newsData, ...(data.articles || [])])
         setNewsPage(nextPage)
-        setHasMoreNews(data.pagination.page < data.pagination.total_pages)
+        setHasMoreNews(data.pagination?.page < data.pagination?.total_pages)
       }
     } catch (error) {
       console.error("[v0] Error loading more news:", error)
@@ -1882,10 +1882,11 @@ ${new Date().toLocaleString("ru-RU")}
       const response = await fetch(`/api/kzt-usd-forecast?days=${kztForecastDays}&history=90`)
       const result = await response.json()
 
-      if (result.success) {
+      if (result.success && result.data) {
         setKztForecastData(result.data)
       } else {
         console.error("Error fetching KZT forecast:", result.error)
+        setKztForecastData(null)
       }
     } catch (error) {
       console.error("Error fetching KZT forecast:", error)
