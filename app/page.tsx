@@ -1,6 +1,5 @@
 "use client"
 
-import MLPredictions from "@/components/MLPredictions"
 import { useState, useEffect } from "react"
 import {
   XAxis,
@@ -16,7 +15,7 @@ import {
 } from "recharts"
 import React from "react" // Import React for using JSX in the new component
 import type { CompanyInfo } from "@/lib/energy-companies-info" // Import energy companies info
-import AIChat from "@/components/ai-chat"
+import MLPredictions from "@/components/MLPredictions"
 
 const BarChart3 = () => (
   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -579,10 +578,11 @@ const ExternalLink = () => (
   </svg>
 )
 
-type Language = "ru" | "en" | "kk"
+type Language = "ru" | "en" | "kk" // Changed kz to kk
 
 const translations = {
   ru: {
+    // Navigation
     analysis: "Анализ",
     alerts: "Алерты",
     education: "Обучение",
@@ -591,12 +591,16 @@ const translations = {
     energyIndustries: "Энергетика",
     mlPredictions: "ML Прогнозы",
     contactSales: "Связаться с отделом продаж",
+
+    // Main page
     turnIdeasIntoPredictions: "Превратите ваши идеи в прогнозы",
     whatWillYouAnalyze: "Что вы будете анализировать? Возможности безграничны.",
     getSuggestions: "✨ Получить предложения",
     writePrompt: "📝 Написать запрос",
     loadLightningFast: "Быстрая загрузка даже при медленном соединении",
     startAnalyzing: "Начать анализ с ИИ →",
+
+    // Analysis
     stockAnalysis: "Анализ акций",
     getDetailedAnalysis: "Получите детальный анализ и прогноз по выбранным акциям",
     analysis: "Анализ",
@@ -615,7 +619,10 @@ const translations = {
     minPrice: "Минимум",
     maxPrice: "Максимум",
     avgPrice: "Среднее",
+    price: "Цена",
     noChartData: "Нет данных для отображения",
+
+    // Alerts
     priceAlerts: "Ценовые алерты",
     stayInformed: "Будьте в курсе изменений цен на ваши активы",
     createNewAlert: "Создать новый алерт",
@@ -627,33 +634,46 @@ const translations = {
     createAlert: "Создать алерт",
     activeAlerts: "Активные алерты",
     noActiveAlerts: "Нет активных алертов",
+
+    // Education
     educationalMaterials: "Обучающие материалы",
     learnMoreAboutTrading: "Узнайте больше о трейдинге и инвестициях",
     articlesAndGuides: "Статьи и руководства",
     videoCourses: "Видеокурсы",
     duration: "Длительность:",
+
+    // News
     marketNews: "Новости рынка",
     stayUpdated: "Будьте в курсе последних новостей и событий",
     source: "Источник:",
     loadMoreNews: "Загрузить больше новостей",
     refreshNews: "Обновить новости",
+
+    // Levels
     beginner: "Начинающий",
     intermediate: "Средний",
     advanced: "Продвинутый",
+
+    // New Keys
     createdBy: "Создано",
     switchTheme: "Переключить тему",
     selectLanguage: "Выберите язык",
+    
+    // Theme customization
     themeSettings: "Настройки темы",
     colorTheme: "Цветовая тема",
     selectColor: "Выберите основной цвет",
     applyTheme: "Применить",
     resetTheme: "Сбросить",
+
+    // AI Chat
     aiAssistant: "FinPredict AI",
     askAboutStocks: "Спросите о ценах акций, прогнозах и анализе энергетических компаний",
     sendMessage: "Введите сообщение...",
     thinking: "Думаю...",
     poweredBy: "Gemini AI",
     disclaimer: "Не является финансовой рекомендацией",
+
     kztUsdForecast: "Прогноз курса доллара к тенге",
     kztForecastDescription: "7-дневный прогноз курса USD/KZT с использованием модели Prophet",
     currentRate: "Текущий курс",
@@ -677,11 +697,13 @@ const translations = {
     descending: "нисходящий",
     positive: "положительное",
     negative: "отрицательное",
+
     energyTitle: "Энергетические компании",
     energySubtitle: "Мировые и казахстанские энергетические компании",
     globalCompanies: "Мировые компании",
     kazakhstanCompanies: "Казахстанские компании",
     companyName: "Компания",
+    ticker: "Тикер",
     currentPrice: "Текущая цена",
     priceChange: "Изменение",
     volatility: "Волатильность",
@@ -698,6 +720,7 @@ const translations = {
     europe: "Европа",
   },
   en: {
+    // Navigation
     analysis: "Analysis",
     alerts: "Alerts",
     education: "Education",
@@ -706,14 +729,19 @@ const translations = {
     energyIndustries: "Energy",
     mlPredictions: "ML Predictions",
     contactSales: "Contact Sales",
+
+    // Main page
     turnIdeasIntoPredictions: "Turn your ideas into predictions",
     whatWillYouAnalyze: "What will you analyze? The possibilities are endless.",
     getSuggestions: "✨ Get suggestions",
     writePrompt: "📝 Write a prompt",
     loadLightningFast: "Load lightning-fast even on slow connections",
     startAnalyzing: "Start analyzing with AI →",
+
+    // Analysis
     stockAnalysis: "Stock Analysis",
     getDetailedAnalysis: "Get detailed analysis and forecast for selected stocks",
+    analysis: "Analysis",
     price: "Price:",
     change: "Change:",
     volume: "Volume:",
@@ -729,7 +757,10 @@ const translations = {
     minPrice: "Minimum",
     maxPrice: "Maximum",
     avgPrice: "Average",
+    price: "Price",
     noChartData: "No data to display",
+
+    // Alerts
     priceAlerts: "Price Alerts",
     stayInformed: "Stay informed about price changes on your assets",
     createNewAlert: "Create New Alert",
@@ -741,33 +772,46 @@ const translations = {
     createAlert: "Create Alert",
     activeAlerts: "Active Alerts",
     noActiveAlerts: "No Active Alerts",
+
+    // Education
     educationalMaterials: "Educational Materials",
     learnMoreAboutTrading: "Learn more about trading and investing",
     articlesAndGuides: "Articles and Guides",
     videoCourses: "Video Courses",
     duration: "Duration:",
+
+    // News
     marketNews: "Market News",
     stayUpdated: "Stay updated with latest news and events",
     source: "Source:",
     loadMoreNews: "Load More News",
     refreshNews: "Refresh News",
+
+    // Levels
     beginner: "Beginner",
     intermediate: "Intermediate",
     advanced: "Advanced",
+
+    // New Keys
     createdBy: "Created by",
     switchTheme: "Switch theme",
     selectLanguage: "Select language",
+    
+    // Theme customization
     themeSettings: "Theme Settings",
     colorTheme: "Color Theme",
     selectColor: "Select primary color",
     applyTheme: "Apply",
     resetTheme: "Reset",
+
+    // AI Chat
     aiAssistant: "FinPredict AI",
     askAboutStocks: "Ask about stock prices, forecasts, and energy company analysis",
     sendMessage: "Type a message...",
     thinking: "Thinking...",
     poweredBy: "Gemini AI",
     disclaimer: "Not financial advice",
+
     kztUsdForecast: "USD/KZT Exchange Rate Forecast",
     kztForecastDescription: "7-day USD/KZT forecast using Prophet model",
     currentRate: "Current Rate",
@@ -791,11 +835,13 @@ const translations = {
     descending: "descending",
     positive: "positive",
     negative: "negative",
+
     energyTitle: "Energy Companies",
     energySubtitle: "Global and Kazakhstan energy companies",
     globalCompanies: "Global Companies",
     kazakhstanCompanies: "Kazakhstan Companies",
     companyName: "Company",
+    ticker: "Ticker",
     currentPrice: "Current Price",
     priceChange: "Change",
     volatility: "Volatility",
@@ -812,22 +858,29 @@ const translations = {
     europe: "Europe",
   },
   kk: {
+    // Changed kz to kk
+    // Navigation
     analysis: "Талдау",
     alerts: "Ескертулер",
-    education: "Оқыту",
+    education: "Оқыту", // Changed from Білім
     news: "Жаңалықтар",
-    kztForecast: "KZT/USD Болжамы",
+    kztForecast: "KZT/USD Болжамы", // Changed to match English and RU
     energyIndustries: "Энергетика",
     mlPredictions: "ML Болжамдар",
     contactSales: "Сатуға хабарласу",
+
+    // Main page
     turnIdeasIntoPredictions: "Идеяларыңызды болжамдарға айналдырыңыз",
     whatWillYouAnalyze: "Не талдайсыз? Мүмкіндіктер шексіз.",
     getSuggestions: "✨ Ұсыныстар алу",
     writePrompt: "📝 Сұрау жазу",
     loadLightningFast: "Баяу байланыста да жылдам жүктеледі",
     startAnalyzing: "AI арқылы талдауды бастау →",
+
+    // Analysis
     stockAnalysis: "Акция талдауы",
     getDetailedAnalysis: "Таңдалған акциялар бойынша толық талдау мен болжам алыңыз",
+    analysis: "Талдау",
     price: "Баға:",
     change: "Өзгеріс:",
     volume: "Көлем:",
@@ -843,7 +896,10 @@ const translations = {
     minPrice: "Минимум",
     maxPrice: "Максимум",
     avgPrice: "Орташа",
+    price: "Баға",
     noChartData: "Көрсету үшін деректер жоқ",
+
+    // Alerts
     priceAlerts: "Баға ескертулері",
     stayInformed: "Активтеріңіздің баға өзгерістері туралы хабардар болыңыз",
     createNewAlert: "Жаңа ескерту жасау",
@@ -855,61 +911,76 @@ const translations = {
     createAlert: "Ескерту жасау",
     activeAlerts: "Белсенді ескертулер",
     noActiveAlerts: "Белсенді ескертулер жоқ",
+
+    // Education
     educationalMaterials: "Білім беру материалдары",
     learnMoreAboutTrading: "Сауда және инвестиция туралы көбірек біліңіз",
     articlesAndGuides: "Мақалалар мен нұсқаулықтар",
     videoCourses: "Видео курстар",
     duration: "Ұзақтығы:",
+
+    // News
     marketNews: "Нарық жаңалықтары",
     stayUpdated: "Соңғы жаңалықтар мен оқиғалардан хабардар болыңыз",
     source: "Көзі:",
     loadMoreNews: "Көбірек жаңалықтар жүктеу",
     refreshNews: "Жаңалықтарды жаңарту",
+
+    // Levels
     beginner: "Бастаушы",
     intermediate: "Орташа",
     advanced: "Жетілген",
+
+    // New Keys
     createdBy: "Жасаған",
     switchTheme: "Тақырыпты ауыстыру",
     selectLanguage: "Тілді таңдау",
+    
+    // Theme customization
     themeSettings: "Тақырып параметрлері",
     colorTheme: "Түс тақырыбы",
     selectColor: "Негізгі түсті таңдаңыз",
     applyTheme: "Қолдану",
     resetTheme: "Қалпына келтіру",
+
+    // AI Chat
     aiAssistant: "FinPredict AI",
     askAboutStocks: "Акция бағалары, болжамдар және энергетикалық компаниялар туралы сұраңыз",
     sendMessage: "Хабарлама жазыңыз...",
     thinking: "Ойланып жатырмын...",
     poweredBy: "Gemini AI",
     disclaimer: "Қаржылық кеңес емес",
-    kztUsdForecast: "USD/KZT Бағамы Болжамы",
-    kztForecastDescription: "Prophet үлгісін қолданып 7-күндік USD/KZT болжамы",
-    currentRate: "Ағымдағы бағам",
-    forecastPeriod: "Болжам кезеңі",
-    days: "күн",
-    loadForecast: "Болжамды жүктеу",
-    loading: "Жүктелуде...",
+
+    kztUsdForecast: "USD/KZT Бағамы Болжамы", // Adjusted for clarity
+    kztForecastDescription: "Prophet үлгісін қолданып 7-күндік USD/KZT болжамы", // Adjusted
+    currentRate: "Ағымдағы бағам", // Adjusted
+    forecastPeriod: "Болжам кезеңі", // Adjusted
+    days: "күн", // Adjusted
+    loadForecast: "Болжамды жүктеу", // Adjusted
+    loading: "Жүктелуде...", // Adjusted
     historicalData: "Тарихи деректер",
     forecastData: "Болжам",
-    confidenceInterval: "Сенімділік аралығы",
+    confidenceInterval: "Сенімділік аралығы", // Adjusted
     modelInformation: "Модель туралы ақпарат",
     trend: "Тренд",
     trendStrength: "Тренд күші",
-    averageRate: "Орташа бағам",
-    lastRate: "Соңғы бағам",
-    oilImpact: "Мұнай әсері",
-    confidence: "Сенімділік",
+    averageRate: "Орташа бағам", // Adjusted
+    lastRate: "Соңғы бағам", // Adjusted
+    oilImpact: "Мұнай әсері", // Adjusted
+    confidence: "Сенімділік", // Adjusted
     dataSource: "Деректер көзі",
-    generatedAt: "Генерацияланған уақыт",
-    ascending: "өсу",
-    descending: "төмендеу",
-    positive: "оң",
-    negative: "теріс",
+    generatedAt: "Генерацияланған уақыт", // Adjusted
+    ascending: "өсу", // Adjusted
+    descending: "төмендеу", // Adjusted
+    positive: "оң", // Adjusted
+    negative: "теріс", // Adjusted
+
     energyTitle: "Энергетикалық компаниялар",
     energySubtitle: "Әлемдік және қазақстандық энергетикалық компаниялар",
     globalCompanies: "Әлемдік компаниялар",
     kazakhstanCompanies: "Қазақстандық компаниялар",
     companyName: "Компания",
+    ticker: "Тикер",
     currentPrice: "Ағымдағы баға",
     priceChange: "Өзгеріс",
     volatility: "Құбылмалылық",
@@ -930,21 +1001,22 @@ const translations = {
 const levelTranslations = {
   ru: { Начинающий: "Начинающий", Средний: "Средний", Продвинутый: "Продвинутый" },
   en: { Начинающий: "Beginner", Средний: "Intermediate", Продвинутый: "Advanced" },
-  kk: { Начинающий: "Бастаушы", Средний: "Орташа", Продвинутый: "Жетілген" },
+  kk: { Начинающий: "Бастаушы", Средний: "Орташа", Продвинутый: "Жетілген" }, // Changed kz to kk
 }
 
+// Removed export default function FinPredictPlatform() { and replaced with Home()
 export default function Home() {
   const [language, setLanguage] = useState<Language>("ru")
   const [forceUpdate, setForceUpdate] = useState(0)
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [showThemePanel, setShowThemePanel] = useState(false)
-  const [selectedThemeHue, setSelectedThemeHue] = useState(264)
+  const [selectedThemeHue, setSelectedThemeHue] = useState(264) // Default purple
 
   const t = (key: string) => translations[language][key as keyof (typeof translations)[typeof language]] || key
 
   const handleLanguageChange = (newLanguage: Language) => {
     setLanguage(newLanguage)
-    setForceUpdate((prev) => prev + 1)
+    setForceUpdate((prev) => prev + 1) // Force component re-render
   }
 
   const toggleTheme = () => {
@@ -952,7 +1024,7 @@ export default function Home() {
   }
 
   const [selectedStock, setSelectedStock] = useState<string | null>(null)
-  const [stockData, setStockData] = useState<StockData | null>(null)
+  const [stockData, setStockData] = useState<StockData | null>(null) // Typed as StockData
   const [selectedModel, setSelectedModel] = useState<string | null>(null)
   const [selectedPeriod, setSelectedPeriod] = useState("1 день")
   const [predictionResult, setPredictionResult] = useState<any>(null)
@@ -964,7 +1036,7 @@ export default function Home() {
   const [marketDataLoading, setMarketDataLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [materials, setMaterials] = useState(educationalMaterials)
-  const [searchTicker, setSearchTicker] = useState("")
+  const [searchTicker, setSearchTicker] = useState("") // Correctly declared searchTicker
   const [searchSuggestions, setSearchSuggestions] = useState<typeof stockDatabase>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [isClient, setIsClient] = useState(false)
@@ -986,6 +1058,7 @@ export default function Home() {
       url: "https://example.com/advanced-trading",
     },
   ])
+  // const [activeTab, setActiveTab] = useState("Анализ") // Removed, replaced by activeSection
   const [loading, setLoading] = useState(false)
   const [newsData, setNewsData] = useState([])
   const [newsLoading, setNewsLoading] = useState(false)
@@ -996,6 +1069,7 @@ export default function Home() {
 
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>("default")
 
+  // New state for active section, used for navigation
   const [activeSection, setActiveSection] = useState<string>("analysis")
 
   const [chartPeriod, setChartPeriod] = useState("1week")
@@ -1040,11 +1114,13 @@ export default function Home() {
             requireInteraction: true,
           })
 
+          // Deactivate alert after triggering
           setAlerts((prev) => prev.map((a) => (a.id === alert.id ? { ...a, isActive: false } : a)))
         }
       })
     }
 
+    // Check alerts every 10 seconds for more responsive notifications
     const interval = setInterval(checkAlerts, 10000)
     return () => clearInterval(interval)
   }, [alerts, notificationPermission])
@@ -1059,6 +1135,7 @@ export default function Home() {
       return realData
     }
 
+    // Fallback to static data if real data not available
     return (
       marketActivity.find((item) => item.ticker === ticker) || {
         ticker,
@@ -1069,6 +1146,8 @@ export default function Home() {
       }
     )
   }
+
+  // Removed activeTab state, using activeSection instead
 
   const predictionPeriods = [
     { id: "1day", label: "1 день", days: 1 },
@@ -1084,13 +1163,17 @@ export default function Home() {
         throw new Error("Failed to fetch")
       }
       const data = await response.json()
+      console.log("[v0] Fetched stock data:", data) // Added debug log to see API response
+      console.log("[v0] Currency from API:", data.currency) // Added debug log for currency
       return data
     } catch (error) {
+      console.error("[v0] Error fetching stock data:", error) // Added debug log for errors
+      // Return fallback data
       const isEuropean = ["ASML.AS", "SAP.DE", "NESN.SW", "NOVO-B.CO", "MC.PA", "OR.PA"].includes(ticker.toUpperCase())
       const isAsian = ["7203.T", "0700.HK", "005930.KS", "TSM", "BABA", "2330.TW"].includes(ticker.toUpperCase())
 
       return {
-        ticker: ticker,
+        ticker: ticker, // Ensure ticker is present in fallback
         price: isEuropean ? 200 : isAsian ? 5000 : 150,
         change: isEuropean ? 3.5 : isAsian ? -50 : 2.5,
         changePercent: 2.1,
@@ -1100,9 +1183,9 @@ export default function Home() {
         week52Low: isEuropean ? 150 : isAsian ? 4000 : 120,
         week52High: isEuropean ? 250 : isAsian ? 6000 : 180,
         name: isEuropean ? `${ticker} Corp.` : isAsian ? `${ticker} Co.` : `${ticker} Corporation`,
-        currency: isEuropean ? "EUR" : isAsian ? "JPY" : "USD",
-        historicalPrices: [],
-        avgVolume: 1000000,
+        currency: isEuropean ? "EUR" : isAsian ? "JPY" : "USD", // Ensure fallback data has correct currency
+        historicalPrices: [], // Add for deterministic calculations
+        avgVolume: 1000000, // Add for deterministic calculations
       }
     }
   }
@@ -1152,6 +1235,7 @@ export default function Home() {
 
   const handleCreateAlert = () => {
     if (newAlert.ticker && newAlert.price) {
+      // Get current market data for the ticker
       const currentMarketData = getMarketData(newAlert.ticker.toUpperCase())
 
       const newAlertItem: Alert = {
@@ -1166,6 +1250,7 @@ export default function Home() {
       setAlerts([...alerts, newAlertItem])
       setNewAlert({ ticker: "", condition: "above", price: "" })
 
+      // Show success message
       window.alert(
         `Алерт создан для ${newAlertItem.ticker}! Вы получите уведомление когда цена ${newAlertItem.condition === "above" ? "превысит" : "упадет ниже"} ${formatCurrency(newAlertItem.price, currentMarketData.currency)}`,
       )
@@ -1177,19 +1262,23 @@ export default function Home() {
   }
 
   const handleStartReading = (materialId: string) => {
+    // Find the material in both categories
     let materialUrl = ""
     let foundMaterial = null
 
+    // Search in articles
     foundMaterial = materials["Статьи и руководства"].find((m) => m.id === materialId)
     if (foundMaterial) {
       materialUrl = foundMaterial.url || ""
     } else {
+      // Search in video courses
       foundMaterial = materials["Видеокурсы"].find((m) => m.id === materialId)
       if (foundMaterial) {
         materialUrl = foundMaterial.url || ""
       }
     }
 
+    // Open URL in new tab if available
     if (materialUrl) {
       window.open(materialUrl, "_blank", "noopener,noreferrer")
     }
@@ -1215,7 +1304,7 @@ export default function Home() {
 
     const avgGain = gains / period
     const avgLoss = losses / period
-    const rs = avgGain / (avgLoss || 1)
+    const rs = avgGain / (avgLoss || 1) // Avoid division by zero
     return 100 - 100 / (1 + rs)
   }
 
@@ -1229,7 +1318,7 @@ export default function Home() {
 
     const mean = returns.reduce((a, b) => a + b, 0) / returns.length
     const variance = returns.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / returns.length
-    return Math.sqrt(variance * 252)
+    return Math.sqrt(variance * 252) // Annualized volatility
   }
 
   const fetchHistoricalData = async (period: string) => {
@@ -1237,34 +1326,38 @@ export default function Home() {
 
     setChartLoading(true)
 
+    // Simulate API call
     setTimeout(() => {
       const periodData = chartPeriods.find((p) => p.id === period)
       const days = periodData?.days || 7
       const currentPrice = stockData.price
       const data = []
 
+      // Generate historical prices
       for (let i = days; i >= 0; i--) {
         const date = new Date()
         date.setDate(date.getDate() - i)
 
+        // Create realistic price movement
         const randomWalk = (Math.random() - 0.5) * 0.02
         const trendFactor = stockData.change > 0 ? 0.001 : -0.001
         const price = currentPrice * (1 + (randomWalk + trendFactor) * (i / days))
 
         data.push({
           date: date.toLocaleDateString("ru-RU", { month: "short", day: "numeric" }),
-          historicalPrice: Number(price.toFixed(2)),
+          historicalPrice: Number(price.toFixed(2)), // Changed from price to historicalPrice
           forecastPrice: null,
           volume: Math.floor(stockData.volume * (0.8 + Math.random() * 0.4)),
           isForecast: false,
         })
       }
 
+      // Add forecast data if prediction result exists
       if (predictionResult && predictionResult.dailyPredictions) {
         predictionResult.dailyPredictions.forEach((pred: any) => {
           data.push({
             date: new Date(pred.date).toLocaleDateString("ru-RU", { month: "short", day: "numeric" }),
-            historicalPrice: null,
+            historicalPrice: null, // Changed from price to historicalPrice
             forecastPrice: pred.price,
             volume: 0,
             isForecast: true,
@@ -1282,9 +1375,11 @@ export default function Home() {
 
     setPredictionLoading(true)
 
+    // Fetch historical data for chart and analysis
     const periodLabel = predictionPeriods.find((p) => p.id === selectedPeriod)?.label || "1 неделя"
     const days = predictionPeriods.find((p) => p.id === selectedPeriod)?.days || 7
 
+    // Mock historical data for calculations if not provided by API
     const mockHistoricalPrices = Array.from({ length: 100 }, (_, i) => {
       const basePrice = stockData.price
       const change = stockData.change || 0
@@ -1300,32 +1395,39 @@ export default function Home() {
       avgVolume: mockAvgVolume,
     }
 
-    fetchHistoricalData(chartPeriod)
+    fetchHistoricalData(chartPeriod) // Update chart data
 
+    // Simulate API call with realistic delay
     setTimeout(() => {
-      const historicalPrices = mockStockDataWithHistory.historicalPrices || []
+      // Calculate technical indicators based on actual price data
+      const historicalPrices = mockStockDataWithHistory.historicalPrices || [] // Use mock or actual historical prices
       const currentPrice = mockStockDataWithHistory.price
 
+      // Calculate SMA20 from historical data if available
       const sma20 =
         historicalPrices.length >= 20
           ? historicalPrices.slice(-20).reduce((sum, p) => sum + p, 0) / 20
           : currentPrice * 0.98
 
+      // Calculate SMA50 from historical data if available
       const sma50 =
         historicalPrices.length >= 50
           ? historicalPrices.slice(-50).reduce((sum, p) => sum + p, 0) / 50
           : currentPrice * 0.95
 
+      // Calculate RSI from price changes
       const priceChanges = historicalPrices.slice(-14).map((p, i, arr) => (i === 0 ? 0 : p - arr[i - 1]))
       const gains = priceChanges.filter((c) => c > 0).reduce((sum, c) => sum + c, 0) / 14
       const losses = Math.abs(priceChanges.filter((c) => c < 0).reduce((sum, c) => sum + c, 0)) / 14
-      const rs = gains / (losses || 1)
+      const rs = gains / (losses || 1) // Avoid division by zero
       const rsi = 100 - 100 / (1 + rs)
 
+      // Calculate volatility from actual price variance
       const mean = historicalPrices.reduce((sum, p) => sum + p, 0) / historicalPrices.length
       const variance = historicalPrices.reduce((sum, p) => sum + Math.pow(p - mean, 2), 0) / historicalPrices.length
-      const volatility = Math.sqrt(variance) / mean
+      const volatility = Math.sqrt(variance) / mean // Normalized volatility
 
+      // Calculate trend strength from linear regression
       const n = historicalPrices.length
       const sumX = (n * (n - 1)) / 2
       const sumY = historicalPrices.reduce((sum, p) => sum + p, 0)
@@ -1334,24 +1436,28 @@ export default function Home() {
       const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX)
       const trendStrength = slope / mean
 
+      // Calculate momentum from recent price changes
       const recentChange = historicalPrices[historicalPrices.length - 1] - historicalPrices[historicalPrices.length - 5]
-      const momentumSignal = recentChange / (historicalPrices[historicalPrices.length - 5] || 1)
+      const momentumSignal = recentChange / (historicalPrices[historicalPrices.length - 5] || 1) // Avoid division by zero
 
+      // Calculate support and resistance levels
       const recentPrices = historicalPrices.slice(-20)
       const supportLevel = Math.min(...recentPrices) * 0.98
       const resistanceLevel = Math.max(...recentPrices) * 1.02
 
+      // Calculate position in 52-week range
       const week52Low = mockStockDataWithHistory.week52Low || currentPrice * 0.8
       const week52High = mockStockDataWithHistory.week52High || currentPrice * 1.2
       const currentVsLow = ((currentPrice - week52Low) / (week52High - week52Low)) * 100
 
+      // Volatility adjustment based on actual volatility
       const volatilityAdjustment = volatility * 0.02
 
       const technicalAnalysis = {
         rsi: Number(rsi.toFixed(2)),
         sma20: Number(sma20.toFixed(2)),
         sma50: Number(sma50.toFixed(2)),
-        macdSignal: currentPrice > sma20 ? "Bullish signal" : "Bearish signal",
+        macdSignal: currentPrice > sma20 ? "Bullish signal" : "Bearish signal", // Simplified MACD representation
         pricePosition:
           currentPrice > sma20 && currentPrice > sma50
             ? "Strong bullish trend"
@@ -1362,17 +1468,17 @@ export default function Home() {
                 : "Sideways movement",
         supportLevel: Number(supportLevel.toFixed(2)),
         resistanceLevel: Number(resistanceLevel.toFixed(2)),
-        volatility: Number((volatility * 100).toFixed(2)),
+        volatility: Number((volatility * 100).toFixed(2)), // Percentage
       }
 
       const volumeSignal =
         mockStockDataWithHistory.avgVolume === 0
           ? 0
-          : mockStockDataWithHistory.volume / mockStockDataWithHistory.avgVolume - 1
+          : mockStockDataWithHistory.volume / mockStockDataWithHistory.avgVolume - 1 // Ratio of current volume to average volume
 
       const marketFactors = {
-        volume: mockStockDataWithHistory.volume,
-        avgVolume: mockStockDataWithHistory.avgVolume,
+        volume: mockStockDataWithHistory.volume, // Corrected: Use mockStockDataWithHistory.volume
+        avgVolume: mockStockDataWithHistory.avgVolume, // Corrected: Use mockStockDataWithHistory.avgVolume
         volumeRatio: Number(
           (mockStockDataWithHistory.avgVolume === 0
             ? 0
@@ -1393,6 +1499,7 @@ export default function Home() {
 
         for (let day = 1; day <= days; day++) {
           const progressRatio = day / days
+          // Introduce some randomness based on model volatility but keep it predictable
           const volatilityFactor =
             Math.sin(day * 0.8 + (Math.random() * Math.PI) / 4) * modelVolatility * 0.005 * (1 - progressRatio * 0.5)
           const expectedPrice = currentPrice + totalChange * currentPrice * progressRatio
@@ -1408,7 +1515,7 @@ export default function Home() {
 
           dailyPredictions.push({
             day,
-            date: date.toLocaleDateString("ru-RU"),
+            date: date.toLocaleDateString("ru-RU"), // Use ru-RU for consistent date format
             price: Number(cumulativePrice.toFixed(2)),
             change: Number(dayChange.toFixed(2)),
             confidence: Math.round(Math.max(60, Math.min(95, 85 - Math.abs(dayChange) * 2))),
@@ -1521,6 +1628,7 @@ export default function Home() {
 
   const downloadReport = () => {
     if (!predictionResult || !stockData) {
+      // Added check for stockData
       window.alert("Сначала выполните прогнозирование для получения отчета.")
       return
     }
@@ -1553,7 +1661,9 @@ ${
   predictionResult.dailyPredictions && predictionResult.dailyPredictions.length > 0
     ? predictionResult.dailyPredictions
         .map(
-          (pred: any) =>
+          (
+            pred: any, // Added type annotation for 'pred'
+          ) =>
             `День ${pred.day}: ${formatCurrency(pred.price || 0, stockData.currency || "USD")} (${pred.change > 0 ? "+" : ""}${(pred.change || 0).toFixed(2)}%)`,
         )
         .join("\n")
@@ -1596,7 +1706,8 @@ ${new Date().toLocaleString("ru-RU")}
   const fetchMarketData = async () => {
     setMarketDataLoading(true)
     try {
-      const allTickers = stockDatabase.map((stock) => stock.ticker)
+      // Fetching data from /api/investing endpoint with tickers from popularStocks
+      const allTickers = stockDatabase.map((stock) => stock.ticker) // Use all available tickers from stockDatabase
       const response = await fetch(`/api/investing?tickers=${allTickers.join(",")}`)
 
       if (response.ok) {
@@ -1607,6 +1718,7 @@ ${new Date().toLocaleString("ru-RU")}
       }
     } catch (error) {
       console.error("Error fetching market data:", error)
+      // Fallback to mock data generation if API fails
       const marketData = []
       const allTickers = stockDatabase.map((stock) => stock.ticker)
 
@@ -1646,6 +1758,7 @@ ${new Date().toLocaleString("ru-RU")}
     }
   }
 
+  // Updated popularStocks structure to match the new `stockDatabase` structure
   const popularStocks = {
     "US Tech": ["AAPL", "GOOGL", "MSFT", "NVDA"],
     "US Finance": ["JPM", "V"],
@@ -1661,6 +1774,7 @@ ${new Date().toLocaleString("ru-RU")}
     setSelectedNews(null)
   }
 
+  // Updated news grid with real article data
   const refreshNewsData = async () => {
     setNewsLoading(true)
     try {
@@ -1739,7 +1853,7 @@ ${new Date().toLocaleString("ru-RU")}
       const query = value.toLowerCase()
       const filtered = stockDatabase
         .filter((stock) => stock.ticker.toLowerCase().includes(query) || stock.name.toLowerCase().includes(query))
-        .slice(0, 8)
+        .slice(0, 8) // Limit to 8 suggestions
 
       setSearchSuggestions(filtered)
       setShowSuggestions(filtered.length > 0)
@@ -1780,6 +1894,8 @@ ${new Date().toLocaleString("ru-RU")}
     }
   }
 
+  // const [activeSection, setActiveSection] = useState<string>("analysis") // Moved to top
+
   return (
     <div
       key={forceUpdate}
@@ -1799,6 +1915,7 @@ ${new Date().toLocaleString("ru-RU")}
                 className="flex items-center space-x-3 cursor-pointer hover:scale-105 transition-transform duration-300"
                 onClick={() => {
                   setActiveSection("analysis")
+                  // setActiveTab("analysis") // Removed, replaced by activeSection logic
                   setSelectedStock(null)
                   setStockData(null)
                 }}
@@ -1818,9 +1935,9 @@ ${new Date().toLocaleString("ru-RU")}
                   { key: "education", label: t("education") },
                   { key: "news", label: t("news") },
                   { key: "kztForecast", label: t("kztForecast") },
-                  { key: "energyIndustries", label: t("energyIndustries") },
-                  { key: "mlpredictions", label: t("mlPredictions") },
-                ].map((tab) => (
+{ key: "energyIndustries", label: t("energyIndustries") },
+              { key: "mlpredictions", label: t("mlPredictions") },
+              ].map((tab) => (
                   <button
                     key={tab.key}
                     onClick={() => setActiveSection(tab.key)}
@@ -1852,7 +1969,7 @@ ${new Date().toLocaleString("ru-RU")}
                 >
                   <option value="ru">🇷🇺 Русский</option>
                   <option value="en">🇬🇧 English</option>
-                  <option value="kk">🇰🇿 Қазақша</option>
+                  <option value="kk">🇰🇿 Қазақша</option> {/* Changed kz to kk */}
                 </select>
 
                 {/* Theme Toggle */}
@@ -1888,6 +2005,7 @@ ${new Date().toLocaleString("ru-RU")}
                     />
                   </button>
                   
+                  {/* Theme Panel Dropdown */}
                   {showThemePanel && (
                     <div 
                       className={`absolute right-0 top-full mt-2 p-4 rounded-xl shadow-2xl border z-50 w-72 ${
@@ -1914,6 +2032,7 @@ ${new Date().toLocaleString("ru-RU")}
                         {t("selectColor")}
                       </p>
                       
+                      {/* Color Presets Grid */}
                       <div className="grid grid-cols-4 gap-2 mb-4">
                         {[
                           { name: "Purple", hue: 264, color: "from-purple-500 to-purple-700" },
@@ -1929,6 +2048,7 @@ ${new Date().toLocaleString("ru-RU")}
                             key={theme.name}
                             onClick={() => {
                               setSelectedThemeHue(theme.hue)
+                              // Apply theme to CSS variables
                               document.documentElement.style.setProperty(
                                 "--primary", 
                                 `oklch(${isDarkMode ? 0.65 : 0.45} 0.22 ${theme.hue})`
@@ -1957,6 +2077,7 @@ ${new Date().toLocaleString("ru-RU")}
                         ))}
                       </div>
                       
+                      {/* Custom Hue Slider */}
                       <div className="mb-4">
                         <label className={`text-xs font-medium mb-2 block ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
                           Custom Color (Hue: {selectedThemeHue})
@@ -1991,6 +2112,7 @@ ${new Date().toLocaleString("ru-RU")}
                         />
                       </div>
                       
+                      {/* Reset Button */}
                       <button
                         onClick={() => {
                           setSelectedThemeHue(264)
@@ -2035,12 +2157,14 @@ ${new Date().toLocaleString("ru-RU")}
           <div className="relative">
             {activeSection === "analysis" && !selectedStock && (
               <div className="relative min-h-[600px] flex items-center justify-center">
+                {/* Hero Section */}
                 <div className="text-center space-y-4">
                   <h2 className={`text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
                     {t("stockAnalysis")}
                   </h2>
                   <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>{t("getDetailedAnalysis")}</p>
 
+                  {/* Search Section */}
                   <div className="max-w-md mx-auto mt-8">
                     <div className="relative">
                       <input
@@ -2076,7 +2200,7 @@ ${new Date().toLocaleString("ru-RU")}
                           >
                             {language === "ru"
                               ? "Возможно вы искали:"
-                              : language === "kk"
+                              : language === "kk" // Changed kz to kk
                                 ? "Мүмкін сіз іздедіңіз:"
                                 : "You might be looking for:"}
                           </div>
@@ -2108,11 +2232,13 @@ ${new Date().toLocaleString("ru-RU")}
                     </div>
                   </div>
 
+                  {/* Popular Stocks */}
                   <div className="mt-12">
                     <h3 className={`text-lg font-semibold mb-6 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
                       {t("popularStocks")}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {/* US Tech */}
                       <div
                         className={`p-6 rounded-xl border ${
                           isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"
@@ -2136,6 +2262,7 @@ ${new Date().toLocaleString("ru-RU")}
                         </div>
                       </div>
 
+                      {/* US Finance */}
                       <div
                         className={`p-6 rounded-xl border ${
                           isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"
@@ -2161,6 +2288,7 @@ ${new Date().toLocaleString("ru-RU")}
                         </div>
                       </div>
 
+                      {/* European */}
                       <div
                         className={`p-6 rounded-xl border ${
                           isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"
@@ -2193,6 +2321,7 @@ ${new Date().toLocaleString("ru-RU")}
 
             {activeSection === "analysis" && selectedStock && (
               <div className="space-y-8">
+                {/* Hero Section */}
                 <div className="text-center space-y-4">
                   <h2 className={`text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
                     {t("stockAnalysis")}
@@ -2504,7 +2633,7 @@ ${new Date().toLocaleString("ru-RU")}
                               Обоснование прогноза
                             </h4>
                             <div className="space-y-2">
-                              {predictionResult.arguments.map((argument: string, index: number) => (
+                              {(predictionResult.arguments || []).map((argument: string, index: number) => (
                                 <div
                                   key={index}
                                   className={`p-3 rounded-lg border-l-4 border-blue-500 ${
@@ -2610,7 +2739,7 @@ ${new Date().toLocaleString("ru-RU")}
                               </div>
                               <div className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
                                 {formatCurrency(
-                                  Math.min(...historicalData.map((d) => d.historicalPrice || d.price)),
+                                  Math.min(...historicalData.map((d) => d.historicalPrice || d.price)), // Use historicalPrice or price
                                   stockData?.currency || "USD",
                                 )}
                               </div>
@@ -2621,7 +2750,7 @@ ${new Date().toLocaleString("ru-RU")}
                               </div>
                               <div className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
                                 {formatCurrency(
-                                  Math.max(...historicalData.map((d) => d.historicalPrice || d.price)),
+                                  Math.max(...historicalData.map((d) => d.historicalPrice || d.price)), // Use historicalPrice or price
                                   stockData?.currency || "USD",
                                 )}
                               </div>
@@ -2633,7 +2762,7 @@ ${new Date().toLocaleString("ru-RU")}
                               <div className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
                                 {formatCurrency(
                                   historicalData.reduce((sum, d) => sum + (d.historicalPrice || d.price), 0) /
-                                    historicalData.length,
+                                    historicalData.length, // Use historicalPrice or price
                                   stockData?.currency || "USD",
                                 )}
                               </div>
@@ -3111,6 +3240,7 @@ ${new Date().toLocaleString("ru-RU")}
                   <p className={isDarkMode ? "text-gray-300" : "text-gray-600"}>{t("kztForecastDescription")}</p>
                 </div>
 
+                {/* Forecast Controls */}
                 <div
                   className={`p-6 rounded-2xl ${
                     isDarkMode
@@ -3153,8 +3283,10 @@ ${new Date().toLocaleString("ru-RU")}
                   </div>
                 </div>
 
+                {/* Forecast Results */}
                 {kztForecastData && (
                   <div className="space-y-6">
+                    {/* Current Rate Card */}
                     <div
                       className={`p-6 rounded-2xl ${
                         isDarkMode
@@ -3183,6 +3315,7 @@ ${new Date().toLocaleString("ru-RU")}
                       </div>
                     </div>
 
+                    {/* Chart */}
                     <div
                       className={`p-6 rounded-2xl ${
                         isDarkMode
@@ -3196,14 +3329,14 @@ ${new Date().toLocaleString("ru-RU")}
                       <ResponsiveContainer width="100%" height={400}>
                         <LineChart
                           data={[
-                            ...kztForecastData.historical.map((d: any) => ({
+                            ...(kztForecastData.historical || []).map((d: any) => ({
                               date: d.date,
                               actual: d.rate,
                               forecast: null,
                               lower: null,
                               upper: null,
                             })),
-                            ...kztForecastData.forecast.map((d: any) => ({
+                            ...(kztForecastData.forecast || []).map((d: any) => ({
                               date: d.date,
                               actual: null,
                               forecast: d.rate,
@@ -3271,6 +3404,7 @@ ${new Date().toLocaleString("ru-RU")}
                       </ResponsiveContainer>
                     </div>
 
+                    {/* Model Information */}
                     <div
                       className={`p-6 rounded-2xl ${
                         isDarkMode
@@ -3340,7 +3474,7 @@ ${new Date().toLocaleString("ru-RU")}
                           {language === "ru" ? "Обоснование прогноза" : "Forecast Reasoning"}
                         </h3>
                         <div className="space-y-4">
-                          {kztForecastData.reasoning.map((reason: string, index: number) => (
+                          {(kztForecastData.reasoning || []).map((reason: string, index: number) => (
                             <div
                               key={index}
                               className={`p-4 rounded-xl ${
@@ -3376,7 +3510,7 @@ ${new Date().toLocaleString("ru-RU")}
               <EnergyIndustriesSection isDarkMode={isDarkMode} language={language} t={t} />
             )}
 
-            {/* ✅ ML PREDICTIONS SECTION — ADDED HERE */}
+            {/* ML Predictions Section */}
             {activeSection === "mlpredictions" && (
               <MLPredictions isDarkMode={isDarkMode} />
             )}
@@ -3435,28 +3569,17 @@ ${new Date().toLocaleString("ru-RU")}
         </div>
       )}
 
-      {/* AI Chat Assistant */}
-      <AIChat
-        isDarkMode={isDarkMode}
-        translations={{
-          aiAssistant: t("aiAssistant"),
-          askAboutStocks: t("askAboutStocks"),
-          sendMessage: t("sendMessage"),
-          thinking: t("thinking"),
-          poweredBy: t("poweredBy"),
-          disclaimer: t("disclaimer"),
-        }}
-      />
+
     </div>
   )
 }
-
-// EnergyIndustriesSection component
+// New EnergyIndustriesSection component using real-time energy prices API
 function EnergyIndustriesSection({
   isDarkMode,
   language,
   t,
 }: { isDarkMode: boolean; language: string; t: (key: string) => string }) {
+  // Use useState hook for selectedCompany
   const [selectedCompany, setSelectedCompany] = useState<CompanyInfo | null>(null)
   const [energyData, setEnergyData] = React.useState<any>(null)
   const [loading, setLoading] = React.useState(true)
@@ -3464,13 +3587,16 @@ function EnergyIndustriesSection({
   const [selectedTab, setSelectedTab] = React.useState<"global" | "europe">("global")
 
   React.useEffect(() => {
+    console.log("[v0] Loading energy market data...")
     fetch("/api/energy")
       .then((res) => res.json())
       .then((data) => {
+        console.log("[v0] Energy data loaded:", data)
         setEnergyData(data)
         setLoading(false)
       })
       .catch((err) => {
+        console.error("[v0] Error loading energy data:", err)
         setError(err.message)
         setLoading(false)
       })
@@ -3496,7 +3622,9 @@ function EnergyIndustriesSection({
   }
 
   const globalCompanies = energyData.global || []
+  // Replaced kazakhstanCompanies with europeCompanies
   const europeCompanies = energyData.europe || []
+  // Replaced kazakhstanCompanies with europeCompanies
   const displayedCompanies = selectedTab === "global" ? globalCompanies : europeCompanies
 
   const handleCompanyClick = (ticker: string) => {
@@ -3508,11 +3636,13 @@ function EnergyIndustriesSection({
 
   return (
     <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+      {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">
           {language === "ru" ? "Энергетика" : language === "en" ? "Energy Industries" : "Энергетика"}
         </h1>
         <p className={`text-lg ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+          {/* Updated subtitle for Europe */}
           {language === "ru"
             ? "Мировые и европейские энергетические компании в режиме реального времени"
             : language === "en"
@@ -3521,6 +3651,7 @@ function EnergyIndustriesSection({
         </p>
       </div>
 
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <div
           className={`${isDarkMode ? "bg-gradient-to-br from-blue-900 to-blue-800" : "bg-gradient-to-br from-blue-100 to-blue-50"} rounded-xl p-6 shadow-lg`}
@@ -3542,6 +3673,7 @@ function EnergyIndustriesSection({
           className={`${isDarkMode ? "bg-gradient-to-br from-purple-900 to-purple-800" : "bg-gradient-to-br from-purple-100 to-purple-50"} rounded-xl p-6 shadow-lg`}
         >
           <div className={`text-sm font-medium ${isDarkMode ? "text-purple-200" : "text-purple-700"} mb-2`}>
+            {/* Updated label for Europe */}
             {language === "ru" ? "Европа" : "Europe"}
           </div>
           <div className="text-3xl font-bold">{europeCompanies.length}</div>
@@ -3556,13 +3688,18 @@ function EnergyIndustriesSection({
         </div>
       </div>
 
+      {/* Tabs */}
       <div className="flex gap-4 mb-6">
         <button
           onClick={() => setSelectedTab("global")}
           className={`px-6 py-3 rounded-lg font-semibold transition-all ${
             selectedTab === "global"
-              ? isDarkMode ? "bg-blue-600 text-white" : "bg-blue-500 text-white"
-              : isDarkMode ? "bg-gray-800 text-gray-400 hover:bg-gray-700" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              ? isDarkMode
+                ? "bg-blue-600 text-white"
+                : "bg-blue-500 text-white"
+              : isDarkMode
+                ? "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
           }`}
         >
           🌍 {language === "ru" ? "Мировые компании" : "Global Companies"}
@@ -3571,14 +3708,20 @@ function EnergyIndustriesSection({
           onClick={() => setSelectedTab("europe")}
           className={`px-6 py-3 rounded-lg font-semibold transition-all ${
             selectedTab === "europe"
-              ? isDarkMode ? "bg-blue-600 text-white" : "bg-blue-500 text-white"
-              : isDarkMode ? "bg-gray-800 text-gray-400 hover:bg-gray-700" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              ? isDarkMode
+                ? "bg-blue-600 text-white"
+                : "bg-blue-500 text-white"
+              : isDarkMode
+                ? "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
           }`}
         >
+          {/* Updated flag and label for Europe */}
           🇪🇺 {language === "ru" ? "Европа" : "Europe"}
         </button>
       </div>
 
+      {/* Companies Table */}
       <div className={`${isDarkMode ? "bg-gray-800" : "bg-white"} rounded-xl shadow-lg overflow-hidden`}>
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -3607,7 +3750,10 @@ function EnergyIndustriesSection({
             <tbody className={`divide-y ${isDarkMode ? "divide-gray-700" : "divide-gray-200"}`}>
               {displayedCompanies.length > 0 ? (
                 displayedCompanies.map((company: any, idx: number) => (
-                  <tr key={idx} className={`${isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-50"} transition-colors`}>
+                  <tr
+                    key={idx}
+                    className={`${isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-50"} transition-colors`}
+                  >
                     <td className="px-6 py-4 whitespace-nowrap font-medium">
                       <button
                         onClick={() => handleCompanyClick(company.ticker)}
@@ -3651,6 +3797,7 @@ function EnergyIndustriesSection({
         </div>
       </div>
 
+      {/* Last Updated */}
       <div className={`mt-4 text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"} text-center`}>
         {language === "ru" ? "Последнее обновление:" : "Last updated:"}{" "}
         {new Date(energyData.lastUpdated).toLocaleString(language === "ru" ? "ru-RU" : "en-US")}
@@ -3665,16 +3812,21 @@ function EnergyIndustriesSection({
             className={`${isDarkMode ? "bg-gray-800" : "bg-white"} rounded-2xl shadow-2xl max-w-2xl w-full p-8 transform transition-all`}
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Header */}
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-center gap-4">
                 <div className="text-5xl">{selectedCompany.flag}</div>
                 <div>
                   <h2 className="text-3xl font-bold mb-1">{selectedCompany.name}</h2>
                   <div className="flex items-center gap-3">
-                    <code className={`px-3 py-1 rounded-lg text-sm font-mono ${isDarkMode ? "bg-gray-700" : "bg-gray-100"}`}>
+                    <code
+                      className={`px-3 py-1 rounded-lg text-sm font-mono ${isDarkMode ? "bg-gray-700" : "bg-gray-100"}`}
+                    >
                       {selectedCompany.ticker}
                     </code>
-                    <span className={`px-3 py-1 rounded-lg text-sm font-medium ${isDarkMode ? "bg-blue-900 text-blue-200" : "bg-blue-100 text-blue-700"}`}>
+                    <span
+                      className={`px-3 py-1 rounded-lg text-sm font-medium ${isDarkMode ? "bg-blue-900 text-blue-200" : "bg-blue-100 text-blue-700"}`}
+                    >
                       {selectedCompany.sector}
                     </span>
                   </div>
@@ -3688,6 +3840,7 @@ function EnergyIndustriesSection({
               </button>
             </div>
 
+            {/* Country */}
             <div className="mb-6">
               <div className={`text-sm font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-1`}>
                 {language === "ru" ? "Страна" : "Country"}
@@ -3695,6 +3848,7 @@ function EnergyIndustriesSection({
               <div className="text-lg font-semibold">{selectedCompany.country}</div>
             </div>
 
+            {/* Description */}
             <div className="mb-6">
               <div className={`text-sm font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-2`}>
                 {language === "ru" ? "О компании" : "About"}
@@ -3704,6 +3858,7 @@ function EnergyIndustriesSection({
               </p>
             </div>
 
+            {/* Close button */}
             <div className="flex justify-end">
               <button
                 onClick={() => setSelectedCompany(null)}
