@@ -452,6 +452,15 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
         </div>
       </div>
 
+      {/* Full Prediction Detail Modal */}
+      {detailPrediction && (
+        <PredictionDetail
+          prediction={detailPrediction}
+          onClose={() => setDetailPrediction(null)}
+          isDarkMode={isDarkMode}
+        />
+      )}
+
     </div>
   )
 }
