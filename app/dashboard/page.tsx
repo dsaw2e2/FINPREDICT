@@ -13,9 +13,10 @@ import {
   Line,
   Legend,
 } from "recharts"
-import React from "react" // Import React for using JSX in the new component
-import type { CompanyInfo } from "@/lib/energy-companies-info" // Import energy companies info
+import React from "react"
+import type { CompanyInfo } from "@/lib/energy-companies-info"
 import MLPredictions from "@/components/MLPredictions"
+import { STOCK_CATEGORIES, ALL_STOCKS, type StockInfo } from "@/lib/stocks"
 
 const BarChart3 = () => (
   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -290,46 +291,20 @@ const MoonIcon = () => (
   </svg>
 )
 
-const stockDatabase = [
-  // US Tech
-  { ticker: "AAPL", name: "Apple Inc.", category: "US Tech" },
-  { ticker: "GOOGL", name: "Alphabet Inc.", category: "US Tech" },
-  { ticker: "MSFT", name: "Microsoft Corporation", category: "US Tech" },
-  { ticker: "TSLA", name: "Tesla, Inc.", category: "US Tech" },
-  { ticker: "META", name: "Meta Platforms, Inc.", category: "US Tech" },
-  { ticker: "NVDA", name: "NVIDIA Corporation", category: "US Tech" },
+// Use comprehensive stock database from lib/stocks.ts
+const stockDatabase = ALL_STOCKS.map(s => ({
+  ticker: s.ticker,
+  name: s.name,
+  category: s.sector,
+  industry: s.industry,
+  country: s.country,
+}))
 
-  // US Finance
-  { ticker: "JPM", name: "JPMorgan Chase & Co.", category: "US Finance" },
-  { ticker: "V", name: "Visa Inc.", category: "US Finance" },
-  { ticker: "MA", name: "Mastercard Incorporated", category: "US Finance" },
-  { ticker: "UNH", name: "UnitedHealth Group", category: "US Finance" },
-  { ticker: "BAC", name: "Bank of America Corp.", category: "US Finance" },
-  { ticker: "WFC", name: "Wells Fargo & Company", category: "US Finance" },
-
-  // European
-  { ticker: "ASML.AS", name: "ASML Holding", category: "European" },
-  { ticker: "SAP.DE", name: "SAP SE", category: "European" },
-  { ticker: "NESN.SW", name: "Nestlé S.A.", category: "European" },
-  { ticker: "NOVO-B.CO", name: "Novo Nordisk", category: "European" },
-  { ticker: "MC.PA", name: "LVMH", category: "European" },
-  { ticker: "OR.PA", name: "L'Oréal", category: "European" },
-
-  // Asian
-  { ticker: "7203.T", name: "Toyota Motor Corp.", category: "Азиатские" },
-  { ticker: "0700.HK", name: "Tencent Holdings", category: "Азиатские" },
-  { ticker: "005930.KS", name: "Samsung Electronics", category: "Азиатские" },
-  { ticker: "TSM", name: "Taiwan Semiconductor", category: "Азиатские" },
-  { ticker: "BABA", name: "Alibaba Group", category: "Азиатские" },
-  { ticker: "2330.TW", name: "TSMC", category: "Азиатские" },
-]
-
-const stockCategories = {
-  "US Tech": ["AAPL", "GOOGL", "MSFT", "TSLA", "META", "NVDA"],
-  "US Finance": ["JPM", "V", "MA", "UNH", "BAC", "WFC"],
-  European: ["ASML.AS", "SAP.DE", "NESN.SW", "NOVO-B.CO", "MC.PA", "OR.PA"],
-  Азиатские: ["7203.T", "0700.HK", "005930.KS", "TSM", "BABA", "2330.TW"],
-}
+// Create categories from the comprehensive list
+const stockCategories = STOCK_CATEGORIES.reduce((acc, cat) => {
+  acc[cat.name] = cat.stocks.map(s => s.ticker)
+  return acc
+}, {} as Record<string, string[]>)
 
 const mockStockData = {
   AAPL: { price: 150.0, change: -2.5, changePercent: -1.64, currency: "USD" },
@@ -433,7 +408,7 @@ const educationalMaterials = {
     },
     {
       id: "4",
-      title: "ARIMA и SARIMAX модели: статистический подход к прогнозированию",
+      title: "ARIMA и SARIMAX модели: статистический под��од к прогнозированию",
       description: "Классические статистические методы анализа временных рядов и их применение в финансах",
       level: "Средний",
       duration: "30 мин",
@@ -1553,7 +1528,7 @@ export default function Home() {
             marketFactors,
             arguments: analysisArguments,
             methodology:
-              "SARIMAX - статистическая модель, которая анализирует исторические тренды и паттерны для прогнозирования будущих цен",
+              "SARIMAX - статистическ��я модель, которая анализирует исторические тренды и паттерны для прогнозирования будущих цен",
           }
         })(),
 

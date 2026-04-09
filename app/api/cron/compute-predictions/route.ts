@@ -12,44 +12,10 @@ import {
 } from '@/lib/ml/prediction-service'
 import { generateEnsemblePrediction } from '@/lib/ml/ensemble-model'
 import { getTickerSentiment } from '@/lib/ml/news-sentiment'
+import { DEFAULT_PREDICTION_TICKERS, COMPANY_NAMES } from '@/lib/stocks'
 
-// Default tickers to track
-const DEFAULT_TICKERS = [
-  // US Tech
-  'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'NVDA', 'META', 'TSLA',
-  // US Finance
-  'JPM', 'BAC', 'WFC', 'GS', 'MS',
-  // US Healthcare
-  'UNH', 'JNJ', 'PFE', 'ABBV',
-  // European
-  'ASML', 'SAP', 'NESN.SW', 'NOVO-B.CO', 'MC.PA',
-  // Asia
-  'TSM', 'BABA', '7203.T', '005930.KS'
-]
-
-// Company name mapping for sentiment
-const COMPANY_NAMES: Record<string, string> = {
-  'AAPL': 'Apple',
-  'MSFT': 'Microsoft',
-  'GOOGL': 'Google Alphabet',
-  'AMZN': 'Amazon',
-  'NVDA': 'NVIDIA',
-  'META': 'Meta Facebook',
-  'TSLA': 'Tesla',
-  'JPM': 'JPMorgan',
-  'BAC': 'Bank of America',
-  'WFC': 'Wells Fargo',
-  'GS': 'Goldman Sachs',
-  'MS': 'Morgan Stanley',
-  'UNH': 'UnitedHealth',
-  'JNJ': 'Johnson Johnson',
-  'PFE': 'Pfizer',
-  'ABBV': 'AbbVie',
-  'ASML': 'ASML',
-  'SAP': 'SAP',
-  'TSM': 'Taiwan Semiconductor TSMC',
-  'BABA': 'Alibaba'
-}
+// Use the comprehensive stock list from lib/stocks.ts
+const DEFAULT_TICKERS = DEFAULT_PREDICTION_TICKERS
 
 function getSupabaseClient() {
   return createClient(

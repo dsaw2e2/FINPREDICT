@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { getStockInfo } from "@/lib/stocks"
 
 interface YahooFinanceData {
   price: number
@@ -134,6 +135,12 @@ const getMockData = (ticker: string): YahooFinanceData => {
 }
 
 const getCompanyName = (ticker: string, isKazakh: boolean): string => {
+  // First try to get from comprehensive stock list
+  const stockInfo = getStockInfo(ticker)
+  if (stockInfo) {
+    return stockInfo.name
+  }
+  
   if (isKazakh) {
     const kazakhNames: { [key: string]: string } = {
       KCEL: "Казахстанская Медная Компания",
@@ -149,13 +156,7 @@ const getCompanyName = (ticker: string, isKazakh: boolean): string => {
     }
     return kazakhNames[ticker] || `${ticker} АО`
   } else {
-    const usNames: { [key: string]: string } = {
-      AAPL: "Apple Inc.",
-      GOOGL: "Alphabet Inc.",
-      TSLA: "Tesla Inc.",
-      MSFT: "Microsoft Corporation",
-    }
-    return usNames[ticker] || `${ticker} Corporation`
+    return `${ticker} Corporation`
   }
 }
 
