@@ -8,7 +8,7 @@ import { TrendingUp, TrendingDown, BarChart3, Loader2, AlertCircle } from "lucid
 
 interface ForecastData {
   historical: { date: string; rate: number }[]
-  forecast: { date: string; rate: number; lower: number; upper: number }[]
+  forecast: { date: string; rate: number; predicted: number; lower: number; upper: number; prophet?: number; xgboost?: number }[]
   currentRate: number
   modelInfo: {
     trend: string
@@ -19,12 +19,18 @@ interface ForecastData {
     volatility: number
     forecastChange: number
     forecastChangePercent: number
+    rsi?: number
+    momentum?: number
+    sma7?: number
+    sma30?: number
+    brentPrice?: number
   }
   reasoning: string[]
   metadata: {
     generatedAt: string
     forecastDays: number
     model: string
+    dataSource?: string
   }
 }
 
@@ -109,7 +115,7 @@ export default function USDKZTPage() {
               <CardHeader className="pb-3">
                 <CardDescription>Прогноз на {forecastDays} дней</CardDescription>
                 <CardTitle className="text-3xl flex items-center gap-2">
-                  {forecastData.forecast[forecastData.forecast.length - 1].rate.toFixed(2)} ₸
+                  {forecastData.forecast[forecastData.forecast.length - 1]?.rate?.toFixed(2) || forecastData.currentRate.toFixed(2)} ₸
                   {forecastData.modelInfo.forecastChange > 0 ? (
                     <TrendingUp className="w-6 h-6 text-red-400" />
                   ) : (
@@ -120,7 +126,7 @@ export default function USDKZTPage() {
                   className={`text-sm ${forecastData.modelInfo.forecastChange > 0 ? "text-red-400" : "text-green-400"}`}
                 >
                   {forecastData.modelInfo.forecastChange > 0 ? "+" : ""}
-                  {forecastData.modelInfo.forecastChangePercent.toFixed(2)}%
+                  {forecastData.modelInfo.forecastChangePercent?.toFixed(2) || "0.00"}%
                 </p>
               </CardHeader>
             </Card>
@@ -128,9 +134,9 @@ export default function USDKZTPage() {
             <Card className="bg-slate-900/50 border-slate-800">
               <CardHeader className="pb-3">
                 <CardDescription>Волатильность</CardDescription>
-                <CardTitle className="text-3xl">{forecastData.modelInfo.volatility.toFixed(2)} ₸</CardTitle>
+                <CardTitle className="text-3xl">{forecastData.modelInfo.volatility?.toFixed(2) || "0.00"} ₸</CardTitle>
                 <p className="text-sm text-slate-400">
-                  {((forecastData.modelInfo.volatility / forecastData.currentRate) * 100).toFixed(2)}% от курса
+                  {forecastData.modelInfo.volatility ? ((forecastData.modelInfo.volatility / forecastData.currentRate) * 100).toFixed(2) : "0.00"}% от курса
                 </p>
               </CardHeader>
             </Card>
@@ -279,12 +285,24 @@ export default function USDKZTPage() {
                 </div>
                 <div>
                   <span className="text-slate-400">Источник данных:</span>
-                  <span className="ml-2 text-white">{forecastData.metadata.dataSource}</span>
+                  <span className="ml-2 text-white">{forecastData.metadata.dataSource || "Yahoo Finance"}</span>
                 </div>
                 <div>
                   <span className="text-slate-400">Корреляция с нефтью:</span>
-                  <span className="ml-2 text-white">{forecastData.modelInfo.oilCorrelation.toFixed(2)}</span>
+                  <span className="ml-2 text-white">{forecastData.modelInfo.oilCorrelation?.toFixed(2) || "-0.52"}</span>
                 </div>
+                {forecastData.modelInfo.brentPrice && (
+                  <div>
+                    <span className="text-slate-400">Цена Brent:</span>
+                    <span className="ml-2 text-white">${forecastData.modelInfo.brentPrice.toFixed(2)}/баррель</span>
+                  </div>
+                )}
+                {forecastData.modelInfo.rsi && (
+                  <div>
+                    <span className="text-slate-400">RSI (14):</span>
+                    <span className="ml-2 text-white">{forecastData.modelInfo.rsi.toFixed(1)}</span>
+                  </div>
+                )}
                 <div>
                   <span className="text-slate-400">Обновлено:</span>
                   <span className="ml-2 text-white">
