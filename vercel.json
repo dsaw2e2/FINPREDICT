@@ -3,6 +3,10 @@
     {
       "path": "/api/news/ingest",
       "schedule": "*/30 * * * *"
+    },
+    {
+      "path": "/api/cron/compute-predictions",
+      "schedule": "0 */4 * * *"
     }
   ]
 }

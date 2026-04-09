@@ -1,4 +1,14 @@
-import crypto from "crypto"
+// Use Web Crypto API for edge compatibility
+function generateHash(content: string): string {
+  // Simple hash function for client/edge compatibility
+  let hash = 0
+  for (let i = 0; i < content.length; i++) {
+    const char = content.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash = hash & hash // Convert to 32bit integer
+  }
+  return Math.abs(hash).toString(16).padStart(8, '0')
+}
 
 export interface NewsArticle {
   title: string
@@ -184,7 +194,7 @@ function analyzeSentiment(text: string): "positive" | "negative" | "neutral" {
 // Generate content hash for deduplication
 export function generateContentHash(article: NewsArticle): string {
   const content = `${article.title}|${article.url}`
-  return crypto.createHash("md5").update(content).digest("hex")
+  return generateHash(content)
 }
 
 // Check if article is duplicate
