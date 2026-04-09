@@ -25,7 +25,7 @@ const EUROPEAN_ENERGY_COMPANIES = [
   { ticker: "FORTUM.HE", name: "Fortum Oyj", country: "Finland", sector: "Utilities", exchange: "Helsinki" },
 ]
 
-const REQUEST_DELAY = 600 // 600ms delay between requests to avoid rate limits
+const REQUEST_DELAY = 1000 // 1 second delay between requests to avoid rate limits
 const MAX_RETRIES = 3
 const CACHE_TTL = 300000 // 5 minutes in milliseconds
 
@@ -52,11 +52,26 @@ async function rateLimitedFetch(url: string, retries = 0): Promise<Response> {
       next: { revalidate: 300 },
     })
 
+    // Check for rate limiting (429 or "Too Many Requests" in body)
     if (response.status === 429 && retries < MAX_RETRIES) {
       const backoffTime = Math.pow(2, retries + 2) * 1000 // Exponential backoff: 4s, 8s, 16s
-      console.log(`[v0] Rate limited, retrying in ${backoffTime}ms (attempt ${retries + 1}/${MAX_RETRIES})`)
+      console.log(`[v0] Rate limited (429), retrying in ${backoffTime}ms (attempt ${retries + 1}/${MAX_RETRIES})`)
       await new Promise((resolve) => setTimeout(resolve, backoffTime))
       return rateLimitedFetch(url, retries + 1)
+    }
+
+    // Check for "Too Many Requests" text response (sometimes Yahoo returns 200 with this text)
+    const contentType = response.headers.get("content-type") || ""
+    if (!contentType.includes("application/json") && retries < MAX_RETRIES) {
+      const text = await response.text()
+      if (text.toLowerCase().includes("too many") || text.toLowerCase().includes("rate limit")) {
+        const backoffTime = Math.pow(2, retries + 2) * 1000
+        console.log(`[v0] Rate limited (text response), retrying in ${backoffTime}ms`)
+        await new Promise((resolve) => setTimeout(resolve, backoffTime))
+        return rateLimitedFetch(url, retries + 1)
+      }
+      // If it's not a rate limit, return a mock response with the text
+      return new Response(JSON.stringify({ error: text }), { status: 200 })
     }
 
     return response
@@ -95,62 +110,82 @@ export function isKazakhTicker(ticker: string): boolean {
   )
 }
 
+// Fetch from Yahoo Finance API
+async function fetchFromYahoo(ticker: string): Promise<CompanyData | null> {
+  const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}`
+  const response = await rateLimitedFetch(yahooUrl)
+
+  if (!response.ok) {
+    throw new Error(`Yahoo Finance API returned ${response.status}`)
+  }
+
+  const contentType = response.headers.get("content-type") || ""
+  if (!contentType.includes("application/json")) {
+    const text = await response.text()
+    throw new Error(`Yahoo Finance returned non-JSON: ${text.slice(0, 50)}`)
+  }
+
+  const data = await response.json()
+  const result = data.chart?.result?.[0]
+
+  if (!result) {
+    throw new Error("No data from Yahoo Finance")
+  }
+
+  const meta = result.meta
+  const quote = result.indicators?.quote?.[0]
+
+  const price = meta.regularMarketPrice || meta.previousClose || 0
+  const previousClose = meta.chartPreviousClose || meta.previousClose || price
+  const change = price - previousClose
+  const changePercent = previousClose > 0 ? (change / previousClose) * 100 : 0
+
+  return {
+    ticker: ticker,
+    name: meta.longName || meta.shortName || ticker,
+    price: price,
+    change: change,
+    changePercent: changePercent,
+    volume: meta.regularMarketVolume || quote?.volume?.[quote.volume.length - 1] || 0,
+    marketCap: meta.marketCap,
+    currency: meta.currency || "USD",
+    week52High: meta.fiftyTwoWeekHigh,
+    week52Low: meta.fiftyTwoWeekLow,
+  }
+}
+
 export async function getCompanyData(ticker: string): Promise<CompanyData | null> {
   try {
     const cached = cache.get(ticker)
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-      console.log(`[v0] Using cached data for ${ticker}`)
       return cached.data
     }
 
-    console.log(`[v0] Fetching data for ${ticker}`)
+    let companyData: CompanyData | null = null
 
-    // Try Yahoo Finance API with rate limiting
-    const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}`
-    const response = await rateLimitedFetch(yahooUrl)
-
-    if (!response.ok) {
-      throw new Error(`Yahoo Finance API returned ${response.status}`)
+    try {
+      companyData = await fetchFromYahoo(ticker)
+    } catch (yahooError) {
+      console.error(`[v0] Yahoo Finance failed for ${ticker}:`, yahooError)
     }
 
-    const data = await response.json()
-    const result = data.chart?.result?.[0]
-
-    if (!result) {
-      throw new Error("No data returned from Yahoo Finance")
+    if (companyData) {
+      cache.set(ticker, { data: companyData, timestamp: Date.now() })
+      return companyData
     }
 
-    const meta = result.meta
-    const quote = result.indicators?.quote?.[0]
-
-    const price = meta.regularMarketPrice || meta.previousClose || 0
-    const previousClose = meta.chartPreviousClose || meta.previousClose || price
-    const change = price - previousClose
-    const changePercent = previousClose > 0 ? (change / previousClose) * 100 : 0
-
-    const companyData: CompanyData = {
-      ticker: ticker,
-      name: meta.longName || meta.shortName || ticker,
-      price: price,
-      change: change,
-      changePercent: changePercent,
-      volume: meta.regularMarketVolume || quote?.volume?.[quote.volume.length - 1] || 0,
-      marketCap: meta.marketCap,
-      currency: meta.currency || "USD",
-      week52High: meta.fiftyTwoWeekHigh,
-      week52Low: meta.fiftyTwoWeekLow,
+    // Return cached data if available (even if expired)
+    const expiredCache = cache.get(ticker)
+    if (expiredCache?.data) {
+      return expiredCache.data
     }
 
-    cache.set(ticker, { data: companyData, timestamp: Date.now() })
-
-    console.log(`[v0] Successfully fetched ${ticker}:`, companyData)
-    return companyData
+    return null
   } catch (error) {
     console.error(`[v0] Error fetching ${ticker}:`, error)
 
     const cached = cache.get(ticker)
     if (cached?.data) {
-      console.log(`[v0] Using expired cached data for ${ticker}`)
       return cached.data
     }
 
