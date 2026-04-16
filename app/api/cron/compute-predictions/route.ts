@@ -1,9 +1,3 @@
-/**
- * Cron Job: Pre-compute ML Predictions
- * Runs every 4 hours to update predictions for tracked stocks
- * Configure in vercel.json: {"crons": [{"path": "/api/cron/compute-predictions", "schedule": "0 */4 * * *"}]}
- */
-
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { 
