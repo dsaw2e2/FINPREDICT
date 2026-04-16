@@ -474,15 +474,15 @@ const getEducationalMaterials = (t: (key: string) => string) => ({
     },
     {
       id: "11",
-      title: "Алгоритмический трейдинг",
-      description: "Создание торговых ботов и автоматизация торговых стратегий",
+      titleKey: "video4Title",
+      descKey: "video4Desc",
       level: "Продвинутый",
       duration: "75 мин",
-      category: "Алгоритмы",
+      categoryKey: "catTrading",
       url: "https://youtu.be/ozoY9ODU-B8?si=pWP1u9FDYIbEvahS",
     },
   ],
-}
+})
 
 const levelColors = {
   Начинающий: "bg-green-500/10 text-green-500 border-green-500/20",
@@ -682,7 +682,7 @@ const translations = {
     ticker: "Тикер",
     currentPrice: "Текущая цена",
     priceChange: "Изменение",
-    volatility: "Волатильность",
+    volatility: "Волатильно��ть",
     status: "Статус",
     viewDetails: "Подробнее",
     lastUpdated: "Последнее обновление",
@@ -1340,25 +1340,11 @@ export default function Home() {
   }
 
   const handleStartReading = (materialId: string) => {
-    // Find the material in both categories
-    let materialUrl = ""
-    let foundMaterial = null
-
-    // Search in articles
-    foundMaterial = materials["Статьи и руководства"].find((m) => m.id === materialId)
-    if (foundMaterial) {
-      materialUrl = foundMaterial.url || ""
-    } else {
-      // Search in video courses
-      foundMaterial = materials["Видеокурсы"].find((m) => m.id === materialId)
-      if (foundMaterial) {
-        materialUrl = foundMaterial.url || ""
-      }
-    }
-
-    // Open URL in new tab if available
-    if (materialUrl) {
-      window.open(materialUrl, "_blank", "noopener,noreferrer")
+    // Search across all translated categories
+    const allMaterials = Object.values(getEducationalMaterials(t)).flat()
+    const found = allMaterials.find((m) => m.id === materialId)
+    if (found?.url) {
+      window.open(found.url, "_blank", "noopener,noreferrer")
     }
   }
 
@@ -1755,7 +1741,7 @@ ${
     ? `RSI: ${predictionResult.technicalAnalysis.rsi}
 SMA 20: ${formatCurrency(predictionResult.technicalAnalysis.sma20, stockData.currency)}
 SMA 50: ${formatCurrency(predictionResult.technicalAnalysis.sma50, stockData.currency)}
-Уровень поддержки: ${formatCurrency(predictionResult.technicalAnalysis.supportLevel, stockData.currency)}
+Уровень под��ержки: ${formatCurrency(predictionResult.technicalAnalysis.supportLevel, stockData.currency)}
 Уровень сопротивления: ${formatCurrency(predictionResult.technicalAnalysis.resistanceLevel, stockData.currency)}
 Волатильность: ${predictionResult.technicalAnalysis.volatility}%`
     : "Нет данных"
