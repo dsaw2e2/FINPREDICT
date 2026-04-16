@@ -377,98 +377,99 @@ const marketActivity = [
   { ticker: "005930.KS", price: 71200, change: 1200, changePercent: 1.71, currency: "USD" },
 ]
 
-const educationalMaterials = {
-  "Статьи и руководства": [
+// Education materials with translation keys
+const getEducationalMaterials = (t: (key: string) => string) => ({
+  [t("articlesAndGuides")]: [
     {
       id: "1",
-      title: "Введение в технический анализ финансовых рынков",
-      description: "Основы технического анализа, графики, индикаторы и паттерны для начинающих трейдеров",
+      titleKey: "article1Title",
+      descKey: "article1Desc",
       level: "Начинающий",
       duration: "15 мин",
-      category: "Технический анализ",
+      categoryKey: "catTechnicalAnalysis",
       url: "https://www.investopedia.com/terms/t/technicalanalysis.asp",
     },
     {
       id: "2",
-      title: "Машинное обучение в финансах: LSTM для прогнозирования цен",
-      description: "Как использовать нейронные сети LSTM для прогнозирования временных рядов финансовых данных",
+      titleKey: "article2Title",
+      descKey: "article2Desc",
       level: "Продвинутый",
       duration: "25 мин",
-      category: "Машинное обучение",
+      categoryKey: "catMachineLearning",
       url: "https://machinelearningmastery.com/time-series-prediction-lstm-recurrent-neural-networks-python-keras/",
     },
     {
       id: "3",
-      title: "Prophet от Facebook: прогнозирование временных рядов",
-      description: "Подробное руководство по использованию библиотеки Prophet для анализа временных рядов",
+      titleKey: "article3Title",
+      descKey: "article3Desc",
       level: "Средний",
       duration: "20 мин",
-      category: "Машинное обучение",
+      categoryKey: "catMachineLearning",
       url: "https://facebook.github.io/prophet/",
     },
     {
       id: "4",
-      title: "ARIMA и SARIMAX модели: статистический под��од к прогнозированию",
-      description: "Классические статистические методы анализа временных рядов и их применение в финансах",
+      titleKey: "article4Title",
+      descKey: "article4Desc",
       level: "Средний",
       duration: "30 мин",
-      category: "Статистика",
+      categoryKey: "catStatistics",
       url: "https://www.statsmodels.org/stable/examples/notebooks/generated/statespace_sarimax_stata.html",
     },
     {
       id: "5",
-      title: "Фундаментальный анализ акций",
-      description: "Изучение финансовых показателей компаний для принятия инвестиционных решений",
+      titleKey: "article5Title",
+      descKey: "article5Desc",
       level: "Средний",
       duration: "35 мин",
-      category: "Фундаментальный анализ",
+      categoryKey: "catFundamentalAnalysis",
       url: "https://www.investopedia.com/terms/f/fundamentalanalysis.asp",
     },
     {
       id: "6",
-      title: "Управление рисками в трейдинге",
-      description: "Стратегии управления рисками и защиты капитала при торговле на финансовых рынках",
+      titleKey: "article6Title",
+      descKey: "article6Desc",
       level: "Начинающий",
       duration: "20 мин",
-      category: "Риск-менеджмент",
+      categoryKey: "catRiskManagement",
       url: "https://www.investopedia.com/articles/trading/09/risk-management.asp",
     },
   ],
-  Видеокурсы: [
+  [t("videoCourses")]: [
     {
       id: "7",
-      title: "Основы трейдинга для начинающих",
-      description: "Видеокурс по основам трейдинга и инвестирования",
+      titleKey: "video1Title",
+      descKey: "video1Desc",
       level: "Начинающий",
       duration: "45 мин",
-      category: "Трейдинг",
+      categoryKey: "catTrading",
       url: "https://youtu.be/kRD8lsuQCAc?si=YEauNoeReZffBqr_",
     },
     {
       id: "8",
-      title: "Продвинутые стратегии трейдинга",
-      description: "Видеокурс по продвинутым стратегиям трейдинга и инвестирования",
+      titleKey: "video2Title",
+      descKey: "video2Desc",
       level: "Продвинутый",
       duration: "60 мин",
-      category: "Трейдинг",
+      categoryKey: "catTrading",
       url: "https://youtu.be/9-z2o_TywCg?si=Riyd99yS-9koDyNo",
     },
     {
       id: "9",
-      title: "Психология трейдинга",
-      description: "Как контролировать эмоции и принимать рациональные решения на рынке",
+      titleKey: "video3Title",
+      descKey: "video3Desc",
       level: "Средний",
       duration: "40 мин",
-      category: "Психология",
+      categoryKey: "catPsychology",
       url: "https://youtu.be/_4D7ne5wDc4?si=gYwZyYsMmmO1tqeG",
     },
     {
       id: "10",
-      title: "Криптовалютный трейдинг",
-      description: "Особенности торговли криптовалютами и анализ крипторынка",
+      titleKey: "video4Title",
+      descKey: "video4Desc",
       level: "Средний",
       duration: "50 мин",
-      category: "Криптовалюты",
+      categoryKey: "catCrypto",
       url: "https://youtu.be/LGHsNaIv5os?si=4OR_f8GiszOOBip4",
     },
     {
@@ -688,11 +689,45 @@ const translations = {
     totalCompanies: "Всего компаний",
     successfulFetches: "Успешно загружено",
     dataNotAvailable: "Данные пока недоступны",
-    runDataCollection: "Запустите скрипт сбора данных",
+    runDataCollection: "Запустите скрипт ��бора данных",
     country: "Страна",
     successRate: "Коэффициент успеха",
     noDataAvailable: "Нет данных",
     europe: "Европа",
+    
+    // Education - Article Titles
+    article1Title: "Введение в технический анализ финансовых рынков",
+    article1Desc: "Основы технического анализа, графики, индикаторы и паттерны для начинающих трейдеров",
+    article2Title: "Машинное обучение в финансах: LSTM для прогнозирования цен",
+    article2Desc: "Как использовать нейронные сети LSTM для прогнозирования временных рядов финансовых данных",
+    article3Title: "Prophet от Facebook: прогнозирование временных рядов",
+    article3Desc: "Подробное руководство по использованию библиотеки Prophet для анализа временных рядов",
+    article4Title: "ARIMA и SARIMAX модели: статистический подход к прогнозированию",
+    article4Desc: "Классические статистические методы анализа временных рядов и их применение в финансах",
+    article5Title: "Фундаментальный анализ акций",
+    article5Desc: "Изучение финансовых показателей компаний для принятия инвестиционных решений",
+    article6Title: "Управление рисками в трейдинге",
+    article6Desc: "Стратегии управления рисками и защиты капитала при торговле на финансовых рынках",
+    
+    // Education - Video Titles
+    video1Title: "Основы трейдинга для начинающих",
+    video1Desc: "Видеокурс по основам трейдинга и инвестирования",
+    video2Title: "Продвинутые стратегии трейдинга",
+    video2Desc: "Видеокурс по продвинутым стратегиям трейдинга и инвестирования",
+    video3Title: "Психология трейдинга",
+    video3Desc: "Как контролировать эмоции и принимать рациональные решения на рынке",
+    video4Title: "Криптовалютный трейдинг",
+    video4Desc: "Особенности торговли криптовалютами и анализ крипторынка",
+    
+    // Education - Categories
+    catTechnicalAnalysis: "Технический анализ",
+    catMachineLearning: "Машинное обучение",
+    catStatistics: "Статистика",
+    catFundamentalAnalysis: "Фундаментальный анализ",
+    catRiskManagement: "Риск-менеджмент",
+    catTrading: "Трейдинг",
+    catPsychology: "Психология",
+    catCrypto: "Криптовалюты",
   },
   en: {
     // Navigation
@@ -831,6 +866,40 @@ const translations = {
     successRate: "Success Rate",
     noDataAvailable: "No data",
     europe: "Europe",
+    
+    // Education - Article Titles
+    article1Title: "Introduction to Technical Analysis of Financial Markets",
+    article1Desc: "Basics of technical analysis, charts, indicators and patterns for beginner traders",
+    article2Title: "Machine Learning in Finance: LSTM for Price Prediction",
+    article2Desc: "How to use LSTM neural networks for forecasting financial time series data",
+    article3Title: "Facebook Prophet: Time Series Forecasting",
+    article3Desc: "Comprehensive guide to using Prophet library for time series analysis",
+    article4Title: "ARIMA and SARIMAX Models: Statistical Approach to Forecasting",
+    article4Desc: "Classical statistical methods for time series analysis and their application in finance",
+    article5Title: "Fundamental Stock Analysis",
+    article5Desc: "Studying company financial metrics for making investment decisions",
+    article6Title: "Risk Management in Trading",
+    article6Desc: "Risk management strategies and capital protection when trading in financial markets",
+    
+    // Education - Video Titles
+    video1Title: "Trading Basics for Beginners",
+    video1Desc: "Video course on trading and investing fundamentals",
+    video2Title: "Advanced Trading Strategies",
+    video2Desc: "Video course on advanced trading and investing strategies",
+    video3Title: "Trading Psychology",
+    video3Desc: "How to control emotions and make rational decisions in the market",
+    video4Title: "Cryptocurrency Trading",
+    video4Desc: "Features of cryptocurrency trading and crypto market analysis",
+    
+    // Education - Categories
+    catTechnicalAnalysis: "Technical Analysis",
+    catMachineLearning: "Machine Learning",
+    catStatistics: "Statistics",
+    catFundamentalAnalysis: "Fundamental Analysis",
+    catRiskManagement: "Risk Management",
+    catTrading: "Trading",
+    catPsychology: "Psychology",
+    catCrypto: "Cryptocurrencies",
   },
   kk: {
     // Changed kz to kk
@@ -970,6 +1039,40 @@ const translations = {
     successRate: "Табыс коэффициенті",
     noDataAvailable: "Деректер жоқ",
     europe: "Еуропа",
+    
+    // Education - Article Titles
+    article1Title: "Қаржы нарықтарының техникалық талдауына кіріспе",
+    article1Desc: "Жаңа трейдерлер үшін техникалық талдаудың негіздері, графиктер, индикаторлар мен үлгілер",
+    article2Title: "Қаржыдағы машиналық оқыту: баға болжау үшін LSTM",
+    article2Desc: "Қаржылық уақыт қатарлары деректерін болжау үшін LSTM нейрондық желілерін қалай пайдалану керек",
+    article3Title: "Facebook Prophet: уақыт қатарларын болжау",
+    article3Desc: "Уақыт қатарларын талдау үшін Prophet кітапханасын пайдалану бойынша толық нұсқаулық",
+    article4Title: "ARIMA және SARIMAX модельдері: болжауға статистикалық тәсіл",
+    article4Desc: "Уақыт қатарларын талдаудың классикалық статистикалық әдістері және оларды қаржыда қолдану",
+    article5Title: "Акцияларды іргелі талдау",
+    article5Desc: "Инвестициялық шешімдер қабылдау үшін компанияның қаржылық көрсеткіштерін зерттеу",
+    article6Title: "Сауда-саттықтағы тәуекелдерді басқару",
+    article6Desc: "Қаржы нарықтарында сауда жасау кезінде тәуекелдерді басқару стратегиялары мен капиталды қорғау",
+    
+    // Education - Video Titles
+    video1Title: "Жаңадан бастаушылар үшін сауда негіздері",
+    video1Desc: "Сауда және инвестициялау негіздері бойынша бейнекурс",
+    video2Title: "Сауда-саттықтың жетілдірілген стратегиялары",
+    video2Desc: "Жетілдірілген сауда және инвестициялау стратегиялары бойынша бейнекурс",
+    video3Title: "Сауда психологиясы",
+    video3Desc: "Эмоцияларды қалай бақылауға алу және нарықта ұтымды шешімдер қабылдау",
+    video4Title: "Криптовалюта саудасы",
+    video4Desc: "Криптовалюталармен сауда жасау ерекшеліктері және крипто нарығын талдау",
+    
+    // Education - Categories
+    catTechnicalAnalysis: "Техникалық талдау",
+    catMachineLearning: "Машиналық оқыту",
+    catStatistics: "Статистика",
+    catFundamentalAnalysis: "Іргелі талдау",
+    catRiskManagement: "Тәуекелдерді басқару",
+    catTrading: "Сауда",
+    catPsychology: "Психология",
+    catCrypto: "Криптовалюталар",
   },
 }
 
@@ -1010,7 +1113,7 @@ export default function Home() {
   const [realMarketData, setRealMarketData] = useState<any[]>([])
   const [marketDataLoading, setMarketDataLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
-  const [materials, setMaterials] = useState(educationalMaterials)
+  // Materials now use translation function - computed in render
   const [searchTicker, setSearchTicker] = useState("") // Correctly declared searchTicker
   const [searchSuggestions, setSearchSuggestions] = useState<typeof stockDatabase>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
@@ -3021,7 +3124,7 @@ ${new Date().toLocaleString("ru-RU")}
                 </div>
 
                 <div className="space-y-8">
-                  {Object.entries(materials).map(([category, items]) => (
+                  {Object.entries(getEducationalMaterials(t)).map(([category, items]) => (
                     <div key={category}>
                       <h3 className={`text-xl font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
                         {category}
@@ -3037,10 +3140,10 @@ ${new Date().toLocaleString("ru-RU")}
                             <div className="space-y-3">
                               <div className="flex items-start justify-between">
                                 <h4 className={`font-medium text-sm ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                                  {material.title}
+                                  {t(material.titleKey)}
                                 </h4>
                                 <div className="flex items-center space-x-2">
-                                  {category === "Видеокурсы" ? (
+                                  {category === t("videoCourses") ? (
                                     <Play className="w-4 h-4 text-blue-600" />
                                   ) : (
                                     <FileText className="w-4 h-4 text-green-600" />
@@ -3048,9 +3151,9 @@ ${new Date().toLocaleString("ru-RU")}
                                 </div>
                               </div>
                               <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                                {material.description}
+                                {t(material.descKey)}
                               </p>
-                              <div className="flex items-center justify-between">
+                              <div className="flex flex-wrap items-center justify-between gap-2">
                                 <div className="flex items-center space-x-2">
                                   <span
                                     className={`px-2 py-1 rounded-full text-xs font-medium border ${
@@ -3063,6 +3166,9 @@ ${new Date().toLocaleString("ru-RU")}
                                       ]
                                     }
                                   </span>
+                                  <span className={`px-2 py-1 rounded-full text-xs ${isDarkMode ? "bg-gray-700 text-gray-300" : "bg-gray-100 text-gray-600"}`}>
+                                    {t(material.categoryKey)}
+                                  </span>
                                 </div>
                                 <span className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
                                   {t("duration")} {material.duration}
@@ -3072,7 +3178,7 @@ ${new Date().toLocaleString("ru-RU")}
                                 onClick={() => handleStartReading(material.id)}
                                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all"
                               >
-                                {category === "Видеокурсы" ? "Смотреть" : "Читать"}
+                                {category === t("videoCourses") ? (language === "ru" ? "Смотреть" : language === "kk" ? "Көру" : "Watch") : (language === "ru" ? "Читать" : language === "kk" ? "Оқу" : "Read")}
                               </button>
                             </div>
                           </div>
