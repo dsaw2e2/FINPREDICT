@@ -1,14 +1,8 @@
-/**
- * Cron Job: Pre-compute ML Predictions
- * Runs every 4 hours to update predictions for tracked stocks
- * Configure in vercel.json: {"crons": [{"path": "/api/cron/compute-predictions", "schedule": "0 */4 * * *"}]}
- */
-
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { 
-  fetchHistoricalData, 
-  cachePrediction 
+import {
+  fetchHistoricalData,
+  cachePrediction
 } from '@/lib/ml/prediction-service'
 import { generateEnsemblePrediction } from '@/lib/ml/ensemble-model'
 import { getTickerSentiment } from '@/lib/ml/news-sentiment'
@@ -31,24 +25,24 @@ export async function GET(request: Request) {
   // Verify cron secret (if configured)
   const authHeader = request.headers.get('authorization')
   const cronSecret = process.env.CRON_SECRET
-  
+
   if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-  
+
   const startTime = Date.now()
   const results: { ticker: string; status: string; error?: string }[] = []
   const timeframes: ('1d' | '1w' | '1m')[] = ['1d', '1w', '1m']
-  
+
   console.log('[v0] Starting prediction computation cron job')
-  
+
   for (const ticker of DEFAULT_TICKERS) {
     try {
       console.log(`[v0] Processing ${ticker}...`)
-      
+
       // Fetch historical data once for all timeframes
       const historicalData = await fetchHistoricalData(ticker, 365)
-      
+
       if (historicalData.length < 50) {
         results.push({
           ticker,
@@ -57,9 +51,9 @@ export async function GET(request: Request) {
         })
         continue
       }
-      
+
       const lastPrice = historicalData[historicalData.length - 1].close
-      
+
       // Get news sentiment (optional, don't fail if unavailable)
       let sentimentScore: number | undefined
       try {
@@ -68,7 +62,7 @@ export async function GET(request: Request) {
       } catch (sentimentError) {
         console.warn(`[v0] Sentiment fetch failed for ${ticker}:`, sentimentError)
       }
-      
+
       // Generate predictions for all timeframes
       for (const timeframe of timeframes) {
         try {
@@ -78,12 +72,12 @@ export async function GET(request: Request) {
           console.error(`[v0] Failed ${ticker}/${timeframe}:`, tfError)
         }
       }
-      
+
       results.push({ ticker, status: 'success' })
-      
+
       // Small delay to avoid rate limiting
       await new Promise(resolve => setTimeout(resolve, 300))
-      
+
     } catch (error) {
       console.error(`[v0] Failed to process ${ticker}:`, error)
       results.push({
@@ -93,20 +87,20 @@ export async function GET(request: Request) {
       })
     }
   }
-  
+
   // Update prediction stats
   try {
     await updatePredictionStats(timeframes)
   } catch (statsError) {
     console.error('[v0] Failed to update stats:', statsError)
   }
-  
+
   const duration = Date.now() - startTime
   const successCount = results.filter(r => r.status === 'success').length
   const errorCount = results.filter(r => r.status === 'error').length
-  
+
   console.log(`[v0] Cron job completed in ${duration}ms: ${successCount} success, ${errorCount} errors`)
-  
+
   return NextResponse.json({
     success: true,
     duration: `${duration}ms`,
@@ -123,16 +117,16 @@ export async function GET(request: Request) {
 async function updatePredictionStats(timeframes: string[]): Promise<void> {
   const supabase = getSupabaseClient()
   const today = new Date().toISOString().split('T')[0]
-  
+
   for (const timeframe of timeframes) {
     const { data: predictions } = await supabase
       .from('stock_predictions')
       .select('direction, confidence, risk_level, sharpe_ratio')
       .eq('timeframe', timeframe)
       .gt('expires_at', new Date().toISOString())
-    
+
     if (!predictions || predictions.length === 0) continue
-    
+
     const stats = {
       stat_date: today,
       timeframe,
@@ -142,12 +136,12 @@ async function updatePredictionStats(timeframes: string[]): Promise<void> {
       neutral_count: predictions.filter(p => p.direction === 'SIDEWAYS').length,
       avg_confidence: predictions.reduce((s, p) => s + p.confidence, 0) / predictions.length,
       avg_sharpe: predictions.filter(p => p.sharpe_ratio != null)
-        .reduce((s, p) => s + (p.sharpe_ratio || 0), 0) / 
+        .reduce((s, p) => s + (p.sharpe_ratio || 0), 0) /
         Math.max(1, predictions.filter(p => p.sharpe_ratio != null).length),
       high_risk_count: predictions.filter(p => p.risk_level === 'high').length,
       computed_at: new Date().toISOString()
     }
-    
+
     await supabase
       .from('prediction_stats')
       .upsert(stats, { onConflict: 'stat_date,timeframe' })
