@@ -1617,7 +1617,7 @@ export default function Home() {
             marketFactors,
             arguments: analysisArguments,
             methodology:
-              "SARIMAX - статистическ��я модел��, которая анализирует исторические тренды и паттерны для прогнозирования будущих цен",
+              "SARIMAX - статистическ��я модел����, которая анализирует исторические тренды и паттерны для прогнозирования будущих цен",
           }
         })(),
 
@@ -1976,18 +1976,26 @@ ${new Date().toLocaleString("ru-RU")}
         >
           <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
             <div className="flex justify-between items-center h-20">
-              <div
-                className="flex items-center space-x-3 cursor-pointer hover:scale-105 transition-transform duration-300"
-                onClick={() => {
-                  setActiveSection("analysis")
-                  // setActiveTab("analysis") // Removed, replaced by activeSection logic
-                  setSelectedStock(null)
-                  setStockData(null)
-                }}
-              >
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
-                  <BarChart3 className="w-6 h-6 text-white" />
-                </div>
+              <div className="flex items-center space-x-3">
+                <a href="/" className="flex items-center space-x-3 cursor-pointer group" title="На главную">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-105 transition-transform">
+                    <BarChart3 className="w-6 h-6 text-white" />
+                  </div>
+                  <h1 className={`text-3xl font-black tracking-tight ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                    FinPredict
+                  </h1>
+                </a>
+                <button
+                  onClick={() => {
+                    setActiveSection("analysis")
+                    setSelectedStock(null)
+                    setStockData(null)
+                  }}
+                  className={`hidden lg:block text-xs px-2 py-1 rounded-md transition-colors ${isDarkMode ? "text-zinc-500 hover:text-zinc-300" : "text-gray-400 hover:text-gray-600"}`}
+                >
+                  {language === "ru" ? "Дашборд" : language === "kk" ? "Бақылау тақтасы" : "Dashboard"}
+                </button>
+              </div>
                 <h1 className={`text-3xl font-black tracking-tight ${isDarkMode ? "text-white" : "text-gray-900"}`}>
                   FinPredict
                 </h1>
