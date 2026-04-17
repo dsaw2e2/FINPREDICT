@@ -1617,7 +1617,7 @@ export default function Home() {
             marketFactors,
             arguments: analysisArguments,
             methodology:
-              "SARIMAX - статистическ��я модель, которая анализирует исторические тренды и паттерны для прогнозирования будущих цен",
+              "SARIMAX - статистическ��я модел��, которая анализирует исторические тренды и паттерны для прогнозирования будущих цен",
           }
         })(),
 
@@ -3580,7 +3580,7 @@ ${new Date().toLocaleString("ru-RU")}
 
             {/* ML Predictions Section */}
             {activeSection === "mlpredictions" && (
-              <MLPredictions isDarkMode={isDarkMode} />
+              <MLPredictions isDarkMode={isDarkMode} language={language} />
             )}
           </div>
         </main>
