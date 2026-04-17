@@ -2,7 +2,11 @@
   "crons": [
     {
       "path": "/api/news/ingest",
-      "schedule": "*/30 * * * *"
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/compute-predictions",
+      "schedule": "0 7 * * *"
     }
   ]
 }

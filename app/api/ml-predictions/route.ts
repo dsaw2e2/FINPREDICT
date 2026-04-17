@@ -1,12 +1,8 @@
 import { NextResponse } from "next/server"
+import { DEFAULT_PREDICTION_TICKERS } from "@/lib/stocks"
 
-// Top S&P 500 tickers to analyze
-const TICKERS = [
-  "AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "TSLA", "BRK-B", "JPM", "V",
-  "UNH", "XOM", "JNJ", "WMT", "MA", "PG", "HD", "CVX", "MRK", "ABBV",
-  "PEP", "KO", "COST", "AVGO", "LLY", "MCD", "CSCO", "TMO", "ACN", "ABT",
-  "DHR", "NEE", "NKE", "ADBE", "CRM", "TXN", "PM", "UPS", "ORCL", "INTC",
-]
+// Use comprehensive stock list
+const TICKERS = DEFAULT_PREDICTION_TICKERS
 
 interface StockData {
   ticker: string

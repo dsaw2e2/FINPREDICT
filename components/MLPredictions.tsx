@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import PredictionDetail from "./ml/PredictionDetail"
 
 interface Prediction {
   ticker: string
@@ -45,6 +46,7 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
   const [searchTicker, setSearchTicker] = useState("")
   const [sortBy, setSortBy] = useState("confidence")
   const [selectedTicker, setSelectedTicker] = useState<string | null>(null)
+  const [detailPrediction, setDetailPrediction] = useState<Prediction | null>(null)
   const [timeframe, setTimeframe] = useState<"1d" | "1w" | "1m">("1w")
 
   useEffect(() => {
@@ -375,9 +377,22 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
                       </div>
                     </div>
 
-                    {/* Price Range Visualization */}
-                    <div className={`mt-4 p-4 rounded-lg ${isDarkMode ? "bg-gray-700/50" : "bg-gray-50"}`}>
-                      <div className={`text-xs ${sub} mb-3`}>Price Forecast Range ({p.timeframe_label})</div>
+{/* View Full Details Button */}
+                                    <div className="mt-4 mb-4">
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          setDetailPrediction(p)
+                                        }}
+                                        className="w-full py-3 px-4 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors"
+                                      >
+                                        View Full Analysis with Charts
+                                      </button>
+                                    </div>
+
+                                    {/* Price Range Visualization */}
+                                    <div className={`mt-4 p-4 rounded-lg ${isDarkMode ? "bg-gray-700/50" : "bg-gray-50"}`}>
+                                      <div className={`text-xs ${sub} mb-3`}>Price Forecast Range ({p.timeframe_label})</div>
                       <div className="relative h-8">
                         <div className={`absolute inset-y-0 left-0 right-0 ${isDarkMode ? "bg-gray-600" : "bg-gray-200"} rounded-full`} />
                         <div 
@@ -436,6 +451,15 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
           Models: LSTM + SARIMAX + Prophet + XGBoost · Ridge meta-model stacking · Real-time Yahoo Finance data
         </div>
       </div>
+
+      {/* Full Prediction Detail Modal */}
+      {detailPrediction && (
+        <PredictionDetail
+          prediction={detailPrediction}
+          onClose={() => setDetailPrediction(null)}
+          isDarkMode={isDarkMode}
+        />
+      )}
 
     </div>
   )
