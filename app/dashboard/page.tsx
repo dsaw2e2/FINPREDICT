@@ -1617,7 +1617,7 @@ export default function Home() {
             marketFactors,
             arguments: analysisArguments,
             methodology:
-              "SARIMAX - статистическ��я модел����, которая анализирует исторические тренды и паттерны для прогнозирования будущих цен",
+              "SARIMAX - статистическ��я модел������, которая анализирует исторические тренды и паттерны для прогнозирования будущих цен",
           }
         })(),
 
@@ -1995,10 +1995,6 @@ ${new Date().toLocaleString("ru-RU")}
                 >
                   {language === "ru" ? "Дашборд" : language === "kk" ? "Бақылау тақтасы" : "Dashboard"}
                 </button>
-              </div>
-                <h1 className={`text-3xl font-black tracking-tight ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                  FinPredict
-                </h1>
               </div>
 
               <nav className="hidden md:flex items-center space-x-2">
@@ -2632,7 +2628,7 @@ ${new Date().toLocaleString("ru-RU")}
                           </div>
                           <div className={`text-center p-4 rounded-lg ${isDarkMode ? "bg-gray-700" : "bg-gray-50"}`}>
                             <div className={`text-sm mb-1 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
-                              Уровень риска
+                              Урове��ь риска
                             </div>
                             <div
                               className={`text-lg font-semibold ${
