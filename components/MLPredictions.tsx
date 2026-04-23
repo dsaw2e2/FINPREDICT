@@ -37,7 +37,128 @@ interface Prediction {
   position_52w: number
 }
 
-export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
+type Lang = "ru" | "en" | "kk"
+
+const ML_TRANSLATIONS: Record<Lang, Record<string, string>> = {
+  ru: {
+    title: "Прогнозы ИИ",
+    subtitle: "Прогнозы на основе ансамбля моделей LSTM + SARIMAX + Prophet + XGBoost",
+    searchPlaceholder: "Поиск тикера...",
+    all: "Все",
+    bullish: "Бычий",
+    bearish: "Медвежий",
+    sideways: "Боковой",
+    sortBy: "Сортировать",
+    confidence: "Уверенность",
+    forecastChange: "Изм. прогноза",
+    sharpe: "Sharpe",
+    timeframe1d: "1 день",
+    timeframe1w: "1 неделя",
+    timeframe1m: "1 месяц",
+    loading: "Загрузка прогнозов...",
+    noData: "Нет данных для отображения",
+    errorPrefix: "Ошибка",
+    forecastPrice: "Прогноз цены",
+    currentPrice: "Текущая цена",
+    priceRange: "Диапазон цены",
+    riskLevel: "Уровень риска",
+    low: "Низкий",
+    medium: "Средний",
+    high: "Высокий",
+    modelWeights: "Веса моделей",
+    keyFactors: "Ключевые факторы",
+    viewFullAnalysis: "Полный анализ с графиками",
+    forecastRange: "Диапазон прогноза",
+    disclaimer: "Прогнозы — вероятностные оценки на основе исторических данных. Не является инвестиционным советом.",
+    models: "Модели",
+    direction: { UP: "Рост", DOWN: "Падение", SIDEWAYS: "Боковой" } as any,
+    rsi: "RSI",
+    volatility: "Волатильность",
+    momentum: "Моментум",
+    predictions: "прогнозов",
+    updated: "Обновлено",
+  },
+  en: {
+    title: "AI Predictions",
+    subtitle: "Forecasts powered by LSTM + SARIMAX + Prophet + XGBoost ensemble",
+    searchPlaceholder: "Search ticker...",
+    all: "All",
+    bullish: "Bullish",
+    bearish: "Bearish",
+    sideways: "Sideways",
+    sortBy: "Sort by",
+    confidence: "Confidence",
+    forecastChange: "Forecast Change",
+    sharpe: "Sharpe",
+    timeframe1d: "1 Day",
+    timeframe1w: "1 Week",
+    timeframe1m: "1 Month",
+    loading: "Loading predictions...",
+    noData: "No data to display",
+    errorPrefix: "Error",
+    forecastPrice: "Forecast Price",
+    currentPrice: "Current Price",
+    priceRange: "Price Range",
+    riskLevel: "Risk Level",
+    low: "Low",
+    medium: "Medium",
+    high: "High",
+    modelWeights: "Model Weights",
+    keyFactors: "Key Factors",
+    viewFullAnalysis: "Full Analysis with Charts",
+    forecastRange: "Forecast Range",
+    disclaimer: "Predictions are probabilistic estimates based on historical data. Not investment advice.",
+    models: "Models",
+    direction: { UP: "Bullish", DOWN: "Bearish", SIDEWAYS: "Sideways" } as any,
+    rsi: "RSI",
+    volatility: "Volatility",
+    momentum: "Momentum",
+    predictions: "predictions",
+    updated: "Updated",
+  },
+  kk: {
+    title: "ЖИ Болжамдары",
+    subtitle: "LSTM + SARIMAX + Prophet + XGBoost ансамблі негізінде болжамдар",
+    searchPlaceholder: "Тикер іздеу...",
+    all: "Барлығы",
+    bullish: "Өсу",
+    bearish: "Төмендеу",
+    sideways: "Бүйірлік",
+    sortBy: "Сұрыптау",
+    confidence: "Сенімділік",
+    forecastChange: "Болжам өзгерісі",
+    sharpe: "Sharpe",
+    timeframe1d: "1 күн",
+    timeframe1w: "1 апта",
+    timeframe1m: "1 ай",
+    loading: "Болжамдар жүктелуде...",
+    noData: "Көрсетуге деректер жоқ",
+    errorPrefix: "Қате",
+    forecastPrice: "Болжам бағасы",
+    currentPrice: "Ағымдағы баға",
+    priceRange: "Баға диапазоны",
+    riskLevel: "Тәуекел деңгейі",
+    low: "Төмен",
+    medium: "Орташа",
+    high: "Жоғары",
+    modelWeights: "Модель салмақтары",
+    keyFactors: "Негізгі факторлар",
+    viewFullAnalysis: "Толық талдау және графиктер",
+    forecastRange: "Болжам диапазоны",
+    disclaimer: "Болжамдар тарихи деректер негізіндегі ықтималдық бағалаулар. Инвестициялық кеңес емес.",
+    models: "Модельдер",
+    direction: { UP: "Өсу", DOWN: "Төмендеу", SIDEWAYS: "Бүйірлік" } as any,
+    rsi: "RSI",
+    volatility: "Ауытқымалылық",
+    momentum: "Импульс",
+    predictions: "болжам",
+    updated: "Жаңартылды",
+  },
+}
+
+export default function MLPredictions({ isDarkMode, language = "ru" }: { isDarkMode: boolean; language?: Lang }) {
+  const t = ML_TRANSLATIONS[language] || ML_TRANSLATIONS.ru
+
   const [predictions, setPredictions] = useState<Prediction[]>([])
   const [metadata, setMetadata] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -85,13 +206,12 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
 
       {/* Header */}
       <div className="text-center space-y-2">
-        <h2 className={`text-3xl font-bold ${text}`}>ML Predictions</h2>
-        <p className={sub}>S&P 500 forecasts — LSTM + SARIMAX + Prophet + XGBoost ensemble</p>
+        <h2 className={`text-3xl font-bold ${text}`}>{t.title}</h2>
+        <p className={sub}>{t.subtitle}</p>
       </div>
 
       {/* Timeframe Selector */}
       <div className={`${card} flex flex-wrap gap-3 items-center justify-center`}>
-        <span className={`text-sm ${sub}`}>Forecast Timeframe:</span>
         {(["1d", "1w", "1m"] as const).map(tf => (
           <button
             key={tf}
@@ -103,7 +223,7 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
-            {tf === "1d" ? "1 Day" : tf === "1w" ? "1 Week" : "1 Month"}
+            {tf === "1d" ? t.timeframe1d : tf === "1w" ? t.timeframe1w : t.timeframe1m}
           </button>
         ))}
       </div>
@@ -111,10 +231,10 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Stocks Analyzed", value: metadata?.count || predictions.length || "40", color: "text-blue-500" },
-          { label: "Avg Confidence", value: `${metadata?.avg_confidence || 65}%`, color: "text-green-500" },
-          { label: "Avg Sharpe Ratio", value: (metadata?.avg_sharpe || 2.5).toFixed(1), color: "text-purple-500" },
-          { label: "High Risk Stocks", value: metadata?.high_risk_count || 0, color: "text-red-500" },
+          { label: language === "ru" ? "Акций проанализировано" : language === "kk" ? "Талданған акциялар" : "Stocks Analyzed", value: metadata?.count || predictions.length || "40", color: "text-blue-500" },
+          { label: language === "ru" ? "Ср. уверенность" : language === "kk" ? "Орт. сенімділік" : "Avg Confidence", value: `${metadata?.avg_confidence || 65}%`, color: "text-green-500" },
+          { label: language === "ru" ? "Ср. коэф. Шарпа" : language === "kk" ? "Орт. Шарп коэф." : "Avg Sharpe Ratio", value: (metadata?.avg_sharpe || 2.5).toFixed(1), color: "text-purple-500" },
+          { label: language === "ru" ? "Высокорисковые" : language === "kk" ? "Жоғары тәуекел" : "High Risk Stocks", value: metadata?.high_risk_count || 0, color: "text-red-500" },
         ].map(s => (
           <div key={s.label} className={card}>
             <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
@@ -128,17 +248,17 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
         <div className={`${card} flex flex-wrap gap-6 items-center justify-center`}>
           <div className="text-center">
             <div className="text-green-500 font-bold text-xl">{metadata.stocks_up}</div>
-            <div className={`text-xs ${sub}`}>Bullish</div>
+            <div className={`text-xs ${sub}`}>{t.bullish}</div>
           </div>
           <div className={`w-px h-8 ${isDarkMode ? "bg-gray-600" : "bg-gray-300"}`} />
           <div className="text-center">
             <div className="text-gray-500 font-bold text-xl">{metadata.stocks_sideways || 0}</div>
-            <div className={`text-xs ${sub}`}>Neutral</div>
+            <div className={`text-xs ${sub}`}>{t.sideways}</div>
           </div>
           <div className={`w-px h-8 ${isDarkMode ? "bg-gray-600" : "bg-gray-300"}`} />
           <div className="text-center">
             <div className="text-red-500 font-bold text-xl">{metadata.stocks_down}</div>
-            <div className={`text-xs ${sub}`}>Bearish</div>
+            <div className={`text-xs ${sub}`}>{t.bearish}</div>
           </div>
           <div className={`w-px h-8 ${isDarkMode ? "bg-gray-600" : "bg-gray-300"}`} />
           <div className="flex-1 max-w-xs">
@@ -148,7 +268,7 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
               <div className="bg-red-500 flex-1" />
             </div>
             <div className={`text-xs ${sub} text-center mt-1`}>
-              Signal distribution for {timeframe === "1d" ? "1-day" : timeframe === "1w" ? "1-week" : "1-month"} forecast
+              {language === "ru" ? `Распределение сигналов (${timeframe === "1d" ? "1 день" : timeframe === "1w" ? "1 нед." : "1 мес."})` : language === "kk" ? `Сигналдар үлестірімі (${timeframe === "1d" ? "1 күн" : timeframe === "1w" ? "1 апта" : "1 ай"})` : `Signal distribution (${timeframe})`}
             </div>
           </div>
         </div>
@@ -158,7 +278,7 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
       <div className={`${card} flex flex-wrap gap-3 items-center`}>
         <input
           type="text"
-          placeholder="Search ticker..."
+          placeholder={t.searchPlaceholder}
           value={searchTicker}
           onChange={e => setSearchTicker(e.target.value)}
           className={inp}
@@ -178,15 +298,15 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
-              {f === "UP" ? "Bullish" : f === "DOWN" ? "Bearish" : f === "SIDEWAYS" ? "Neutral" : "All"}
+              {f === "UP" ? t.bullish : f === "DOWN" ? t.bearish : f === "SIDEWAYS" ? t.sideways : t.all}
             </button>
           ))}
         </div>
         <select value={sortBy} onChange={e => setSortBy(e.target.value)} className={inp}>
-          <option value="confidence">Sort: Confidence</option>
-          <option value="sharpe">Sort: Sharpe Ratio</option>
-          <option value="change">Sort: Forecast Change</option>
-          <option value="risk">Sort: Risk (Low First)</option>
+          <option value="confidence">{t.sortBy}: {t.confidence}</option>
+          <option value="sharpe">{t.sortBy}: {t.sharpe}</option>
+          <option value="change">{t.sortBy}: {t.forecastChange}</option>
+          <option value="risk">{t.sortBy}: {t.riskLevel}</option>
         </select>
       </div>
 
@@ -194,7 +314,7 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
       {loading ? (
         <div className={`${card} text-center py-16`}>
           <div className="animate-spin w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4" />
-          <p className={sub}>Loading ML predictions...</p>
+          <p className={sub}>{t.loading}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -231,19 +351,19 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
                       <div className={`text-xs font-medium ${
                         p.direction === "UP" ? "text-green-500" : p.direction === "DOWN" ? "text-red-500" : "text-gray-500"
                       }`}>
-                        {p.direction === "UP" ? "Bullish" : p.direction === "DOWN" ? "Bearish" : "Neutral"}
+                        {p.direction === "UP" ? t.bullish : p.direction === "DOWN" ? t.bearish : t.sideways}
                       </div>
                     </div>
                   </div>
 
                   {/* Price Range */}
                   <div className="min-w-[180px]">
-                    <div className={`text-xs ${sub}`}>Current → {p.timeframe_label} Target</div>
+                    <div className={`text-xs ${sub}`}>{t.currentPrice} → {p.timeframe_label}</div>
                     <div className={`font-semibold ${text}`}>
                       ${p.last_price.toFixed(2)} → ${p.forecast_price.toFixed(2)}
                     </div>
                     <div className={`text-xs ${sub}`}>
-                      Range: ${p.price_range_low.toFixed(2)} - ${p.price_range_high.toFixed(2)} (±{p.uncertainty_pct.toFixed(1)}%)
+                      {t.forecastRange}: ${p.price_range_low.toFixed(2)} - ${p.price_range_high.toFixed(2)} (±{p.uncertainty_pct.toFixed(1)}%)
                     </div>
                     <div className={`text-sm font-bold ${
                       p.direction === "UP" ? "text-green-500" : p.direction === "DOWN" ? "text-red-500" : "text-gray-500"
@@ -254,7 +374,7 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
 
                   {/* Confidence & Risk */}
                   <div className="min-w-[120px]">
-                    <div className={`text-xs ${sub} mb-1`}>Confidence</div>
+                    <div className={`text-xs ${sub} mb-1`}>{t.confidence}</div>
                     <div className="flex items-center gap-2">
                       <div className={`w-16 h-2 rounded-full ${isDarkMode ? "bg-gray-700" : "bg-gray-200"}`}>
                         <div 
@@ -273,20 +393,20 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
                       p.risk_level === "medium" ? "bg-yellow-500/20 text-yellow-500" :
                       "bg-red-500/20 text-red-500"
                     }`}>
-                      {p.risk_level.charAt(0).toUpperCase() + p.risk_level.slice(1)} Risk
+                      {p.risk_level === "low" ? t.low : p.risk_level === "medium" ? t.medium : t.high} {t.riskLevel}
                     </div>
                   </div>
 
                   {/* Key Metrics */}
                   <div className="flex flex-wrap gap-3 flex-1">
                     <div className="text-center">
-                      <div className={`text-xs ${sub}`}>RSI</div>
+                      <div className={`text-xs ${sub}`}>{t.rsi}</div>
                       <div className={`font-bold ${p.rsi > 70 ? "text-red-500" : p.rsi < 30 ? "text-green-500" : "text-blue-500"}`}>
                         {p.rsi.toFixed(0)}
                       </div>
                     </div>
                     <div className="text-center">
-                      <div className={`text-xs ${sub}`}>Volatility</div>
+                      <div className={`text-xs ${sub}`}>{t.volatility}</div>
                       <div className={`font-bold ${p.volatility > 4 ? "text-red-500" : p.volatility < 2 ? "text-green-500" : "text-yellow-500"}`}>
                         {p.volatility.toFixed(1)}%
                       </div>
@@ -316,7 +436,7 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
                 {/* Key Factors Preview */}
                 {p.key_factors && p.key_factors.length > 0 && (
                   <div className={`mt-3 pt-3 border-t ${isDarkMode ? "border-gray-700" : "border-gray-200"}`}>
-                    <div className={`text-xs ${sub}`}>Key Factors:</div>
+                    <div className={`text-xs ${sub}`}>{t.keyFactors}:</div>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {p.key_factors.slice(0, 3).map((factor, i) => (
                         <span key={i} className={`text-xs px-2 py-1 rounded ${isDarkMode ? "bg-gray-700" : "bg-gray-100"} ${text}`}>
@@ -333,13 +453,13 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
                     
                     {/* Reasoning */}
                     <div className={`p-4 rounded-lg mb-4 ${isDarkMode ? "bg-blue-900/30 border border-blue-800" : "bg-blue-50 border border-blue-200"}`}>
-                      <div className={`text-sm font-medium ${text} mb-1`}>Why this prediction?</div>
+                      <div className={`text-sm font-medium ${text} mb-1`}>{language === "ru" ? "Почему такой прогноз?" : language === "kk" ? "Неліктен мұндай болжам?" : "Why this prediction?"}</div>
                       <p className={`text-sm ${sub}`}>{p.reasoning}</p>
                     </div>
 
                     {/* Model Weights */}
                     <div className={`p-3 rounded-lg mb-4 ${isDarkMode ? "bg-gray-700/50" : "bg-gray-50"}`}>
-                      <div className={`text-xs ${sub} mb-2`}>Ensemble Model Weights</div>
+                      <div className={`text-xs ${sub} mb-2`}>{t.modelWeights}</div>
                       <div className="flex h-3 rounded-full overflow-hidden mb-2">
                         <div className="bg-green-500" style={{ width: `${p.w_lstm * 100}%` }} title="LSTM" />
                         <div className="bg-orange-500" style={{ width: `${p.w_sarimax * 100}%` }} title="SARIMAX" />
@@ -356,23 +476,23 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div className={`p-3 rounded-lg ${isDarkMode ? "bg-gray-700/50" : "bg-gray-50"}`}>
-                        <div className={`text-xs ${sub} mb-1`}>Momentum</div>
+                        <div className={`text-xs ${sub} mb-1`}>{t.momentum}</div>
                         <div className={`font-bold ${p.momentum > 0 ? "text-green-500" : "text-red-500"}`}>
                           {p.momentum >= 0 ? "+" : ""}{p.momentum.toFixed(2)}%
                         </div>
                       </div>
                       <div className={`p-3 rounded-lg ${isDarkMode ? "bg-gray-700/50" : "bg-gray-50"}`}>
-                        <div className={`text-xs ${sub} mb-1`}>Sentiment Score</div>
+                        <div className={`text-xs ${sub} mb-1`}>{language === "ru" ? "Настроение рынка" : language === "kk" ? "Нарық сезімі" : "Sentiment Score"}</div>
                         <div className={`font-bold ${p.sentiment > 0 ? "text-green-500" : p.sentiment < 0 ? "text-red-500" : text}`}>
                           {p.sentiment >= 0 ? "+" : ""}{p.sentiment.toFixed(2)}
                         </div>
                       </div>
                       <div className={`p-3 rounded-lg ${isDarkMode ? "bg-gray-700/50" : "bg-gray-50"}`}>
-                        <div className={`text-xs ${sub} mb-1`}>Max Drawdown</div>
+                        <div className={`text-xs ${sub} mb-1`}>{language === "ru" ? "Макс. просадка" : language === "kk" ? "Макс. шығын" : "Max Drawdown"}</div>
                         <div className="font-bold text-red-500">{p.max_drawdown.toFixed(2)}%</div>
                       </div>
                       <div className={`p-3 rounded-lg ${isDarkMode ? "bg-gray-700/50" : "bg-gray-50"}`}>
-                        <div className={`text-xs ${sub} mb-1`}>Model RMSE</div>
+                        <div className={`text-xs ${sub} mb-1`}>{language === "ru" ? "RMSE модели" : language === "kk" ? "Модель RMSE" : "Model RMSE"}</div>
                         <div className={`font-bold ${text}`}>${p.ens_rmse.toFixed(2)}</div>
                       </div>
                     </div>
@@ -386,7 +506,7 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
                                         }}
                                         className="w-full py-3 px-4 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors"
                                       >
-                                        View Full Analysis with Charts
+                                        {t.viewFullAnalysis}
                                       </button>
                                     </div>
 
@@ -430,25 +550,23 @@ export default function MLPredictions({ isDarkMode }: { isDarkMode: boolean }) {
       {/* Error State */}
       {error && (
         <div className={`${card} text-center border-red-500/50`}>
-          <div className="text-red-500 font-medium mb-2">Error Loading Predictions</div>
+          <div className="text-red-500 font-medium mb-2">{t.errorPrefix}</div>
           <p className={`text-sm ${sub}`}>{error}</p>
           <button 
             onClick={() => window.location.reload()}
             className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
           >
-            Try Again
+            {language === "ru" ? "Попробовать снова" : language === "kk" ? "Қайталап көру" : "Try Again"}
           </button>
         </div>
       )}
 
       {/* Disclaimer */}
       <div className={`${card} text-center space-y-2`}>
-        <div className={`text-xs font-medium ${text}`}>Important Disclaimer</div>
-        <p className={`text-xs ${sub}`}>
-          {metadata?.disclaimer || "AI predictions are probabilistic estimates based on historical technical analysis. This is NOT financial advice. Past performance does not guarantee future results. Always conduct your own research and consult a financial advisor before making investment decisions."}
-        </p>
+        <div className={`text-xs font-medium ${text}`}>{language === "ru" ? "Важное уведомление" : language === "kk" ? "Маңызды ескерту" : "Important Disclaimer"}</div>
+        <p className={`text-xs ${sub}`}>{t.disclaimer}</p>
         <div className={`text-xs ${sub} pt-2 border-t ${isDarkMode ? "border-gray-700" : "border-gray-200"}`}>
-          Models: LSTM + SARIMAX + Prophet + XGBoost · Ridge meta-model stacking · Real-time Yahoo Finance data
+          {t.models}: LSTM + SARIMAX + Prophet + XGBoost · Ridge meta-model stacking
         </div>
       </div>
 

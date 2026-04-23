@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ru">
+    <html lang="ru" className="bg-zinc-950">
       <body className={`font-sans antialiased ${inter.variable}`}>
         {children}
         <Analytics />

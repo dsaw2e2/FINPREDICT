@@ -1,16 +1,19 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
+import { motion } from "framer-motion"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { TrendingUp, Loader2, ArrowLeft, Eye, EyeOff, Check } from "lucide-react"
+import { TrendingUp, Loader2, Eye, EyeOff, Check, Zap, Shield, Clock } from "lucide-react"
 
 export default function SignUpPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const planId = searchParams.get("plan")
   
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
@@ -25,14 +28,15 @@ export default function SignUpPage() {
     { label: "One number", met: /\d/.test(password) },
   ]
 
+  const allRequirementsMet = passwordRequirements.every(r => r.met)
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
 
-    // Validate password
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters long")
+    if (!allRequirementsMet) {
+      setError("Please meet all password requirements")
       setIsLoading(false)
       return
     }
@@ -47,6 +51,7 @@ export default function SignUpPage() {
           `${window.location.origin}/auth/callback`,
         data: {
           full_name: fullName,
+          plan: planId || "free",
         },
       },
     })
@@ -57,217 +62,283 @@ export default function SignUpPage() {
       return
     }
 
+    // Redirect to success page or directly to dashboard
     router.push("/auth/sign-up-success")
   }
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/10 via-background to-primary/5 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-background/80 to-transparent" />
-        
-        {/* Grid pattern */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{
-          backgroundImage: `linear-gradient(to right, currentColor 1px, transparent 1px),
-                           linear-gradient(to bottom, currentColor 1px, transparent 1px)`,
-          backgroundSize: '40px 40px'
-        }} />
-        
+    <div className="min-h-screen bg-zinc-950 flex overflow-hidden">
+      {/* Left Panel - Animated Background */}
+      <div className="hidden lg:flex lg:w-1/2 relative">
+        {/* Aurora Effect */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div
+            className="absolute inset-0 opacity-50"
+            style={{
+              background: `
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.3), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 50%, rgba(59, 130, 246, 0.2), transparent),
+                radial-gradient(ellipse 50% 30% at 20% 80%, rgba(34, 197, 94, 0.15), transparent)
+              `,
+            }}
+          />
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              repeatType: "reverse",
+            }}
+            className="absolute top-1/4 left-1/3 w-96 h-96 rounded-full bg-purple-500/20 blur-3xl"
+          />
+        </div>
+
+        {/* Grid Pattern */}
+        <div 
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+            backgroundSize: "50px 50px",
+          }}
+        />
+
+        {/* Content */}
         <div className="relative z-10 flex flex-col justify-between p-12 w-full">
-          <Link href="/" className="flex items-center gap-3 text-foreground hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-primary-foreground" />
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 via-blue-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-purple-500/25 group-hover:shadow-purple-500/40 transition-shadow">
+              <TrendingUp className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-semibold tracking-tight">FinPredict</span>
+            <span className="text-2xl font-bold text-white tracking-tight">FinPredict</span>
           </Link>
           
           <div className="space-y-8">
-            <h1 className="text-4xl font-bold leading-tight text-balance">
-              Start Making
-              <br />
-              <span className="text-primary">Smarter Decisions</span>
-            </h1>
-            
-            <div className="space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h1 className="text-5xl font-bold text-white leading-tight">
+                Start Your
+                <br />
+                <span className="bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                  Trading Journey
+                </span>
+              </h1>
+              <p className="text-zinc-400 text-lg mt-6 max-w-md leading-relaxed">
+                Join thousands of traders using AI-powered predictions to navigate the markets with confidence.
+              </p>
+            </motion.div>
+
+            {/* Benefits */}
+            <div className="space-y-4 pt-4">
               {[
-                "Multi-model ensemble predictions",
-                "Real-time technical analysis",
-                "News sentiment integration",
-                "Custom alerts and notifications"
-              ].map((feature, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Check className="w-3 h-3 text-primary" />
+                { icon: Zap, text: "14-day free trial on all paid plans" },
+                { icon: Shield, text: "No credit card required to start" },
+                { icon: Clock, text: "Setup in under 2 minutes" },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
+                  className="flex items-center gap-3"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center">
+                    <item.icon className="w-4 h-4 text-purple-400" />
                   </div>
-                  <span className="text-muted-foreground">{feature}</span>
-                </div>
+                  <span className="text-zinc-300">{item.text}</span>
+                </motion.div>
               ))}
             </div>
-          </div>
-          
-          <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
+
+            {/* Social Proof */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="flex items-center gap-4 pt-6"
+            >
+              <div className="flex -space-x-3">
+                {[1, 2, 3, 4, 5].map((i) => (
                   <div 
                     key={i}
-                    className="w-8 h-8 rounded-full bg-muted border-2 border-background flex items-center justify-center text-xs font-medium text-muted-foreground"
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-zinc-700 to-zinc-800 border-2 border-zinc-950 flex items-center justify-center text-xs font-medium text-zinc-400"
                   >
                     {String.fromCharCode(64 + i)}
                   </div>
                 ))}
               </div>
-              <div className="text-sm text-muted-foreground">
-                <span className="text-foreground font-medium">2,500+</span> traders joined this month
+              <div className="text-sm">
+                <span className="text-white font-semibold">2,500+</span>
+                <span className="text-zinc-500"> traders joined this month</span>
               </div>
-            </div>
+            </motion.div>
+          </div>
+          
+          <div className="text-sm text-zinc-500">
+            Rated 4.9/5 by professional traders
           </div>
         </div>
       </div>
 
       {/* Right Panel - Signup Form */}
-      <div className="flex-1 flex flex-col justify-center px-8 lg:px-16">
-        <div className="lg:hidden mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-            Back to home
-          </Link>
-        </div>
-
+      <div className="flex-1 flex flex-col justify-center px-8 lg:px-16 bg-zinc-900/50">
         <div className="w-full max-w-md mx-auto">
-          <div className="lg:hidden mb-8">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-primary-foreground" />
+          {/* Mobile Logo */}
+          <div className="lg:hidden mb-10">
+            <Link href="/" className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 via-blue-500 to-cyan-500 flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-semibold">FinPredict</span>
-            </div>
+              <span className="text-xl font-bold text-white">FinPredict</span>
+            </Link>
           </div>
 
-          <div className="space-y-2 mb-8">
-            <h2 className="text-2xl font-bold tracking-tight">Create your account</h2>
-            <p className="text-muted-foreground">
-              Start your free trial with full access to all features
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {error && (
-              <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
-                {error}
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="fullName">Full name</Label>
-              <Input
-                id="fullName"
-                type="text"
-                placeholder="John Doe"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required
-                autoComplete="name"
-                className="h-12"
-              />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="space-y-2 mb-8">
+              <h2 className="text-3xl font-bold text-white tracking-tight">Create your account</h2>
+              <p className="text-zinc-400">
+                {planId ? `Start your ${planId} plan free trial` : "Start with free access to all features"}
+              </p>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email address</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoComplete="email"
-                className="h-12"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Create a strong password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  autoComplete="new-password"
-                  className="h-12 pr-12"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-              
-              {/* Password requirements */}
-              {password.length > 0 && (
-                <div className="pt-2 space-y-1.5">
-                  {passwordRequirements.map((req, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm">
-                      <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
-                        req.met ? "bg-green-500/20 text-green-500" : "bg-muted text-muted-foreground"
-                      }`}>
-                        {req.met && <Check className="w-2.5 h-2.5" />}
-                      </div>
-                      <span className={req.met ? "text-muted-foreground" : "text-muted-foreground/70"}>
-                        {req.label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                  {error}
+                </motion.div>
               )}
+
+              <div className="space-y-2">
+                <Label htmlFor="fullName" className="text-zinc-300">Full name</Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  placeholder="John Doe"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                  autoComplete="name"
+                  className="h-12 bg-zinc-800/50 border-zinc-700 text-white placeholder:text-zinc-500 focus:border-purple-500 focus:ring-purple-500/20"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-zinc-300">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                  className="h-12 bg-zinc-800/50 border-zinc-700 text-white placeholder:text-zinc-500 focus:border-purple-500 focus:ring-purple-500/20"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-zinc-300">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Create a strong password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    autoComplete="new-password"
+                    className="h-12 bg-zinc-800/50 border-zinc-700 text-white placeholder:text-zinc-500 focus:border-purple-500 focus:ring-purple-500/20 pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                
+                {/* Password requirements */}
+                {password.length > 0 && (
+                  <div className="pt-3 space-y-2">
+                    {passwordRequirements.map((req, i) => (
+                      <motion.div 
+                        key={i} 
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        className="flex items-center gap-2 text-sm"
+                      >
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${
+                          req.met 
+                            ? "bg-green-500/20 text-green-400" 
+                            : "bg-zinc-800 text-zinc-600"
+                        }`}>
+                          {req.met && <Check className="w-3 h-3" />}
+                        </div>
+                        <span className={req.met ? "text-zinc-400" : "text-zinc-600"}>
+                          {req.label}
+                        </span>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full h-12 text-base font-medium bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 border-0 shadow-lg shadow-purple-500/25 mt-2"
+                disabled={isLoading || !allRequirementsMet}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Creating account...
+                  </>
+                ) : (
+                  "Create account"
+                )}
+              </Button>
+            </form>
+
+            <div className="mt-8 text-center">
+              <p className="text-zinc-400">
+                Already have an account?{" "}
+                <Link 
+                  href="/auth/login" 
+                  className="text-purple-400 font-medium hover:text-purple-300 transition-colors"
+                >
+                  Sign in
+                </Link>
+              </p>
             </div>
 
-            <Button
-              type="submit"
-              className="w-full h-12 text-base font-medium"
-              disabled={isLoading || !passwordRequirements.every(r => r.met)}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Creating account...
-                </>
-              ) : (
-                "Create account"
-              )}
-            </Button>
-          </form>
-
-          <div className="mt-8 text-center">
-            <p className="text-muted-foreground">
-              Already have an account?{" "}
-              <Link 
-                href="/auth/login" 
-                className="text-primary font-medium hover:text-primary/80 transition-colors"
-              >
-                Sign in
-              </Link>
-            </p>
-          </div>
-
-          <div className="mt-12 pt-8 border-t border-border">
-            <p className="text-xs text-muted-foreground text-center leading-relaxed">
-              By creating an account, you agree to our{" "}
-              <Link href="/terms" className="underline hover:text-foreground transition-colors">
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link href="/privacy" className="underline hover:text-foreground transition-colors">
-                Privacy Policy
-              </Link>
-            </p>
-          </div>
+            <div className="mt-10 pt-8 border-t border-zinc-800">
+              <p className="text-xs text-zinc-500 text-center leading-relaxed">
+                By creating an account, you agree to our{" "}
+                <Link href="/terms" className="underline hover:text-zinc-300 transition-colors">
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy" className="underline hover:text-zinc-300 transition-colors">
+                  Privacy Policy
+                </Link>
+              </p>
+            </div>
+          </motion.div>
         </div>
       </div>
     </div>

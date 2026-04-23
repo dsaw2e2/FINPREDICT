@@ -120,6 +120,17 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Lamp component — conic gradient utility (Tailwind v4 compatible) */
+.bg-gradient-conic {
+  background-image: conic-gradient(var(--conic-position), var(--tw-gradient-stops, var(--tw-gradient-from, transparent), var(--tw-gradient-to, transparent)));
+}
+
+@keyframes aurora {
+  from { background-position: 50% 50%, 50% 50%; }
+  to { background-position: 350% 50%, 350% 50%; }
+}
+.animate-aurora { animation: aurora 60s linear infinite; }
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
