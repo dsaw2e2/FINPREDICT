@@ -1,43 +1,52 @@
 import { headers } from "next/headers"
 import { NextResponse } from "next/server"
-import { stripe } from "@/lib/stripe"
-import { createClient } from "@supabase/supabase-js"
+import { getStripe } from "@/lib/stripe"
 import Stripe from "stripe"
 
-// Create admin client for webhook (bypasses RLS)
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
 export async function POST(req: Request) {
-  const body = await req.text()
-  const headersList = await headers()
-  const signature = headersList.get("stripe-signature")
-
-  if (!signature) {
-    return NextResponse.json({ error: "Missing signature" }, { status: 400 })
+  // Only process if environment variables are set
+  if (!process.env.STRIPE_SECRET_KEY || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    return NextResponse.json(
+      { error: "Webhook not configured" },
+      { status: 503 }
+    )
   }
 
-  let event: Stripe.Event
-
   try {
-    // For development without webhook secret, parse the event directly
-    // In production, use stripe.webhooks.constructEvent with STRIPE_WEBHOOK_SECRET
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+    const { createClient } = await import("@supabase/supabase-js")
     
-    if (webhookSecret) {
-      event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
-    } else {
-      // Development mode - parse JSON directly (less secure)
-      event = JSON.parse(body) as Stripe.Event
-    }
-  } catch (err) {
-    console.error("Webhook signature verification failed:", err)
-    return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
-  }
+    // Create admin client for webhook (bypasses RLS)
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
 
-  try {
+    const body = await req.text()
+    const headersList = await headers()
+    const signature = headersList.get("stripe-signature")
+
+    if (!signature) {
+      return NextResponse.json({ error: "Missing signature" }, { status: 400 })
+    }
+
+    let event: Stripe.Event
+
+    try {
+      const stripe = getStripe()
+      const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+
+      if (webhookSecret) {
+        event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
+      } else {
+        event = JSON.parse(body) as Stripe.Event
+      }
+    } catch (err) {
+      console.error("Webhook signature verification failed:", err)
+      return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
+    }
+
+    const stripe = getStripe()
+
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session
@@ -46,11 +55,9 @@ export async function POST(req: Request) {
         const customerId = session.customer as string
         const subscriptionId = session.subscription as string
 
-        if (userId && productId) {
-          // Get subscription details
+        if (userId && productId && subscriptionId) {
           const subscription = await stripe.subscriptions.retrieve(subscriptionId)
-          
-          // Update or insert subscription record
+
           const { error } = await supabaseAdmin
             .from("subscriptions")
             .upsert({
@@ -59,12 +66,14 @@ export async function POST(req: Request) {
               stripe_customer_id: customerId,
               stripe_subscription_id: subscriptionId,
               status: subscription.status,
-              current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-              current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+              current_period_start: new Date(
+                subscription.current_period_start * 1000
+              ).toISOString(),
+              current_period_end: new Date(
+                subscription.current_period_end * 1000
+              ).toISOString(),
               cancel_at_period_end: subscription.cancel_at_period_end,
               updated_at: new Date().toISOString(),
-            }, {
-              onConflict: "user_id",
             })
 
           if (error) {
@@ -78,7 +87,6 @@ export async function POST(req: Request) {
         const subscription = event.data.object as Stripe.Subscription
         const customerId = subscription.customer as string
 
-        // Find user by customer ID
         const { data: existingSub } = await supabaseAdmin
           .from("subscriptions")
           .select("user_id")
@@ -90,8 +98,12 @@ export async function POST(req: Request) {
             .from("subscriptions")
             .update({
               status: subscription.status,
-              current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-              current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+              current_period_start: new Date(
+                subscription.current_period_start * 1000
+              ).toISOString(),
+              current_period_end: new Date(
+                subscription.current_period_end * 1000
+              ).toISOString(),
               cancel_at_period_end: subscription.cancel_at_period_end,
               updated_at: new Date().toISOString(),
             })
@@ -108,7 +120,6 @@ export async function POST(req: Request) {
         const subscription = event.data.object as Stripe.Subscription
         const customerId = subscription.customer as string
 
-        // Find and downgrade user to free plan
         const { data: existingSub } = await supabaseAdmin
           .from("subscriptions")
           .select("user_id")
@@ -137,7 +148,7 @@ export async function POST(req: Request) {
       case "invoice.payment_succeeded": {
         const invoice = event.data.object as Stripe.Invoice
         const subscriptionId = invoice.subscription as string
-        
+
         if (subscriptionId) {
           const subscription = await stripe.subscriptions.retrieve(subscriptionId)
           const customerId = subscription.customer as string
@@ -153,7 +164,9 @@ export async function POST(req: Request) {
               .from("subscriptions")
               .update({
                 status: "active",
-                current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+                current_period_end: new Date(
+                  subscription.current_period_end * 1000
+                ).toISOString(),
                 updated_at: new Date().toISOString(),
               })
               .eq("user_id", existingSub.user_id)
