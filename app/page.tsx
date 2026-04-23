@@ -160,29 +160,35 @@ export default function LandingPage() {
         {/* Navbar */}
         <div className="absolute top-0 left-0 right-0 z-50 px-6 py-5 flex items-center justify-between max-w-7xl mx-auto w-full">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
               <TrendingUp className="w-4 h-4 text-white" />
             </div>
             <span className="text-white font-bold text-lg tracking-tight">FinPredict</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
+            <Link
+              href="/pricing"
+              className="text-zinc-400 hover:text-white text-sm transition-colors hidden sm:block"
+            >
+              Pricing
+            </Link>
             <Link
               href="/dashboard"
               className="text-zinc-400 hover:text-white text-sm transition-colors hidden sm:block"
             >
-              Дашборд
+              Dashboard
             </Link>
             <Link
-              href="/usd-kzt"
+              href="/auth/login"
               className="text-zinc-400 hover:text-white text-sm transition-colors hidden sm:block"
             >
-              USD/KZT
+              Sign in
             </Link>
             <Link
-              href="/dashboard"
-              className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all"
+              href="/auth/sign-up"
+              className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-500/20"
             >
-              Открыть
+              Get Started
             </Link>
           </div>
         </div>
@@ -230,17 +236,17 @@ export default function LandingPage() {
             className="flex flex-col sm:flex-row gap-4 mb-16"
           >
             <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/30"
+              href="/auth/sign-up"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/30"
             >
-              Открыть платформу
+              Start Free Trial
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
-              href="/usd-kzt"
+              href="/pricing"
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white font-semibold text-sm transition-all hover:-translate-y-0.5"
             >
-              USD/KZT прогноз
+              View Pricing
             </Link>
           </motion.div>
 
@@ -354,7 +360,7 @@ export default function LandingPage() {
           transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
           className="mt-8 bg-gradient-to-br from-slate-300 to-slate-500 py-4 bg-clip-text text-center text-4xl md:text-6xl font-bold tracking-tight text-transparent text-balance"
         >
-          Начните прогнозировать <br /> уже сегодня
+          Start Predicting <br /> Markets Today
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -363,7 +369,7 @@ export default function LandingPage() {
           transition={{ delay: 0.5, duration: 0.6 }}
           className="text-zinc-400 text-center max-w-md mt-4 text-pretty leading-relaxed"
         >
-          Бесплатный доступ к ИИ-прогнозам, курсу тенге и образовательным материалам.
+          Join thousands of traders using AI-powered predictions. Start your 14-day free trial today.
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -373,17 +379,17 @@ export default function LandingPage() {
           className="mt-8 flex flex-col sm:flex-row gap-4 items-center"
         >
           <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 px-10 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-base transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/40"
+            href="/auth/sign-up"
+            className="inline-flex items-center gap-2 px-10 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold text-base transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/40"
           >
-            Перейти к дашборду
+            Create Free Account
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
-            href="/usd-kzt"
+            href="/pricing"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-xl border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white font-semibold text-base transition-all"
           >
-            USD/KZT прогноз
+            View Plans
           </Link>
         </motion.div>
       </LampContainer>
@@ -392,16 +398,17 @@ export default function LandingPage() {
       <footer className="bg-zinc-950 border-t border-zinc-800/50 py-10 px-4">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
               <TrendingUp className="w-3.5 h-3.5 text-white" />
             </div>
             <span className="text-zinc-300 font-semibold text-sm">FinPredict</span>
           </div>
           <div className="flex gap-6 text-sm">
-            <Link href="/dashboard" className="text-zinc-500 hover:text-white transition-colors">Дашборд</Link>
-            <Link href="/usd-kzt" className="text-zinc-500 hover:text-white transition-colors">USD/KZT</Link>
+            <Link href="/pricing" className="text-zinc-500 hover:text-white transition-colors">Pricing</Link>
+            <Link href="/dashboard" className="text-zinc-500 hover:text-white transition-colors">Dashboard</Link>
+            <Link href="/auth/login" className="text-zinc-500 hover:text-white transition-colors">Sign in</Link>
           </div>
-          <div className="text-zinc-600 text-xs text-center">Не является инвестиционным советом · © 2025 FinPredict</div>
+          <div className="text-zinc-600 text-xs text-center">Not financial advice · 2025 FinPredict</div>
         </div>
       </footer>
     </div>
