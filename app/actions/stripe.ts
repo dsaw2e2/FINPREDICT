@@ -1,6 +1,6 @@
 "use server"
 
-import { stripe } from "@/lib/stripe"
+import { getStripe } from "@/lib/stripe"
 import { getProduct } from "@/lib/products"
 import { createClient } from "@/lib/supabase/server"
 import { headers } from "next/headers"
@@ -28,6 +28,7 @@ export async function createCheckoutSession(productId: string) {
     .single()
 
   let customerId = subscription?.stripe_customer_id
+  const stripe = getStripe()
 
   if (!customerId) {
     const customer = await stripe.customers.create({
@@ -81,6 +82,7 @@ export async function createCheckoutSession(productId: string) {
 }
 
 export async function getCheckoutSession(sessionId: string) {
+  const stripe = getStripe()
   const session = await stripe.checkout.sessions.retrieve(sessionId)
   return {
     status: session.status,
